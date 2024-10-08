@@ -7,3 +7,4 @@ license = "Unlicense"
 edition = "2021"
 
 [dependencies]
+awc = "3.5.1"
