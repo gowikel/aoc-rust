@@ -5,6 +5,7 @@ version = "0.1.0"
 authors = ["Pedro Piquero Plaza <pedropiqueroplaza@proton.me>"]
 license = "Unlicense"
 edition = "2021"
+publish = false
 
 [dependencies]
 reqwest = { version = "0.12", features = ["json"] }
