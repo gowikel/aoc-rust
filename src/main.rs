@@ -1,7 +1,7 @@
 extern crate pretty_env_logger;
-#[macro_use]
 extern crate log;
-use anyhow::{Context, Result};
+
+use anyhow::{Result};
 use aoc::cli;
 use chrono::Datelike;
 use clap::{Parser, Subcommand};

@@ -1,6 +1,5 @@
 //! This contains helper functions related to the CLI
 
-use chrono;
 use std::cmp::PartialEq;
 
 #[cfg(test)]
