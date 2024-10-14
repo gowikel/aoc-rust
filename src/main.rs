@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use aoc::cli;
+use aoc::{cli, constants};
 use chrono::Datelike;
 use clap::{Parser, Subcommand};
 use log::{info, trace};
@@ -77,8 +77,9 @@ fn main() -> Result<()> {
     info!("Application started...");
     trace!("Checking Download requirements are met...");
     if Commands::Download == cli.command {
-        env::var("AOC_COOKIE")
-            .with_context(|| "AOC_COOKIE is required to make a download.")?;
+        env::var(constants::AOC_COOKIE).with_context(|| {
+            format!("{} is required to make a download.", constants::AOC_COOKIE)
+        })?;
     }
 
     trace!(

@@ -1,11 +1,11 @@
 pub mod cli;
+pub mod constants;
 
 use anyhow::{Context, Result};
 use log::{debug, trace};
 use reqwest::header::COOKIE;
 use std::env;
 use std::fmt::Debug;
-use std::ops::RangeInclusive;
 
 /// This identifies any AoC puzzle unequivocally
 pub struct Puzzle {
@@ -13,28 +13,25 @@ pub struct Puzzle {
     day: u32,
 }
 
-const VALID_YEARS: RangeInclusive<u32> = 2023..=2023;
-const VALID_DAYS: RangeInclusive<u32> = 1..=25;
-
 impl Puzzle {
     /// Creates a new Puzzle input
     /// It will fail if the year or the day are outside the valid ranges
     pub fn new(year: u32, day: u32) -> Result<Self> {
         trace!("Creating new puzzle with year {}, day {}", year, day);
 
-        if !VALID_YEARS.contains(&year) {
+        if !constants::VALID_YEARS.contains(&year) {
             anyhow::bail!(format!(
                 "year should be in [{}-{}] range. Current: {year}.",
-                VALID_YEARS.start(),
-                VALID_YEARS.end()
+                constants::VALID_YEARS.start(),
+                constants::VALID_YEARS.end()
             ));
         }
 
-        if !VALID_DAYS.contains(&day) {
+        if !constants::VALID_DAYS.contains(&day) {
             anyhow::bail!(format!(
                 "day should be in [{}-{}] range. Current: {day}].",
-                VALID_DAYS.start(),
-                VALID_DAYS.end()
+                constants::VALID_DAYS.start(),
+                constants::VALID_DAYS.end()
             ));
         }
 
@@ -48,8 +45,8 @@ impl Puzzle {
         let base_url = "https://adventofcode.com";
         let endpoint =
             format!("{base_url}/{}/day/{}/input", self.year, self.day);
-        let cookie =
-            env::var("AOC_COOKIE").with_context(|| "AOC_COOKIE not set")?;
+        let cookie = env::var(constants::AOC_COOKIE)
+            .with_context(|| format!("{} not set", constants::AOC_COOKIE))?;
         let client = reqwest::blocking::Client::default();
 
         debug!("endpoint: {}", endpoint);
