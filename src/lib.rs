@@ -25,15 +25,15 @@ impl Puzzle {
 
         if year < MIN_VALID_YEAR || year > MAX_VALID_YEAR {
             anyhow::bail!(format!(
-                "year should be in [{MIN_VALID_YEAR}-{MAX_VALID_YEAR}] range. \
-                    Current: {year}"
+                "year should be in [{MIN_VALID_YEAR}-{MAX_VALID_YEAR}] range. Current: \
+                {year}."
             ));
         }
 
         if day < MIN_VALID_DAY || day > MAX_VALID_DAY {
             anyhow::bail!(format!(
-                "day should be in [{MIN_VALID_DAY}-{MAX_VALID_DAY}] range. \
-                    Current: {day}]"
+                "day should be in [{MIN_VALID_DAY}-{MAX_VALID_DAY}] range. Current: \
+                {day}]."
             ));
         }
 

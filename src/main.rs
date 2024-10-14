@@ -77,10 +77,8 @@ fn main() -> Result<()> {
     info!("Application started...");
     trace!("Checking Download requirements are met...");
     if Commands::Download == cli.command {
-        env::var("AOC_COOKIE").with_context(|| {
-            "AOC_COOKIE is required to make a \
-        download."
-        })?;
+        env::var("AOC_COOKIE")
+            .with_context(|| "AOC_COOKIE is required to make a download.")?;
     }
 
     trace!(
