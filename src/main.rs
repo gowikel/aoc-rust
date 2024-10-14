@@ -42,7 +42,10 @@ fn calculate_default_year() -> u32 {
     cli::default_year(&provider)
 }
 
-fn calculate_default_month() {}
+fn calculate_default_day() -> u32 {
+    let provider = ChronoDataProvider {};
+    cli::default_day(&provider)
+}
 
 #[derive(Parser)]
 #[command(version, author, about)]
@@ -54,8 +57,8 @@ struct Cli {
 
     /// Selected day.
     /// Defaults to current day on December between 1-25, 1 otherwise.
-    #[arg(long, short)]
-    day: Option<u32>,
+    #[arg(long, short, default_value_t = calculate_default_day())]
+    day: u32,
 
     #[command(subcommand)]
     command: Commands,
