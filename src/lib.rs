@@ -5,6 +5,7 @@ use log::{debug, trace};
 use reqwest::header::COOKIE;
 use std::env;
 use std::fmt::Debug;
+use std::ops::RangeInclusive;
 
 /// This identifies any AoC puzzle unequivocally
 pub struct Puzzle {
@@ -12,10 +13,8 @@ pub struct Puzzle {
     day: u32,
 }
 
-const MIN_VALID_YEAR: u32 = 2023;
-const MAX_VALID_YEAR: u32 = 2023;
-const MIN_VALID_DAY: u32 = 1;
-const MAX_VALID_DAY: u32 = 25;
+const VALID_YEARS: RangeInclusive<u32> = 2023..=2023;
+const VALID_DAYS: RangeInclusive<u32> = 1..=25;
 
 impl Puzzle {
     /// Creates a new Puzzle input
@@ -23,17 +22,19 @@ impl Puzzle {
     pub fn new(year: u32, day: u32) -> Result<Self> {
         trace!("Creating new puzzle with year {}, day {}", year, day);
 
-        if year < MIN_VALID_YEAR || year > MAX_VALID_YEAR {
+        if !VALID_YEARS.contains(&year) {
             anyhow::bail!(format!(
-                "year should be in [{MIN_VALID_YEAR}-{MAX_VALID_YEAR}] range. Current: \
-                {year}."
+                "year should be in [{}-{}] range. Current: {year}.",
+                VALID_YEARS.start(),
+                VALID_YEARS.end()
             ));
         }
 
-        if day < MIN_VALID_DAY || day > MAX_VALID_DAY {
+        if !VALID_DAYS.contains(&day) {
             anyhow::bail!(format!(
-                "day should be in [{MIN_VALID_DAY}-{MAX_VALID_DAY}] range. Current: \
-                {day}]."
+                "day should be in [{}-{}] range. Current: {day}].",
+                VALID_DAYS.start(),
+                VALID_DAYS.end()
             ));
         }
 
