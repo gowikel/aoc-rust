@@ -1,8 +1,10 @@
-use anyhow::{Result};
+use anyhow::{Context, Result};
 use aoc::cli;
 use chrono::Datelike;
 use clap::{Parser, Subcommand};
-use log::info;
+use log::{info, trace};
+use std::cmp::PartialEq;
+use std::env;
 
 struct ChronoDataProvider {}
 
@@ -61,10 +63,10 @@ struct Cli {
     command: Commands,
 }
 
-#[derive(Subcommand, Debug)]
+#[derive(Subcommand, Debug, PartialEq)]
 enum Commands {
     /// Downloads the specified puzzle input from AoC
-    Download {},
+    Download,
 }
 
 fn main() -> Result<()> {
@@ -73,9 +75,28 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     info!("Application started...");
+    trace!("Checking Download requirements are met...");
+    if Commands::Download == cli.command {
+        env::var("AOC_COOKIE").with_context(|| {
+            "AOC_COOKIE is required to make a \
+        download."
+        })?;
+    }
 
-    println!("Hi how! {:?}", &cli.command);
-    println!("Year: {}", cli.year);
+    trace!(
+        "Initializing the puzzle with year: {} and day: {}...",
+        cli.year,
+        cli.day
+    );
+    let puzzle = aoc::Puzzle::new(cli.year, cli.day)?;
+
+    match cli.command {
+        Commands::Download {} => {
+            let puzzle_data = puzzle.download()?;
+
+            println!("{}", puzzle_data);
+        }
+    }
 
     Ok(())
 }

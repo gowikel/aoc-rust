@@ -8,21 +8,21 @@ use std::fmt::Debug;
 
 /// This identifies any AoC puzzle unequivocally
 pub struct Puzzle {
-    year: i32,
-    day: i32,
+    year: u32,
+    day: u32,
 }
 
-const MIN_VALID_YEAR: i32 = 2023;
-const MAX_VALID_YEAR: i32 = 2023;
-const MIN_VALID_DAY: i32 = 1;
-const MAX_VALID_DAY: i32 = 25;
+const MIN_VALID_YEAR: u32 = 2023;
+const MAX_VALID_YEAR: u32 = 2023;
+const MIN_VALID_DAY: u32 = 1;
+const MAX_VALID_DAY: u32 = 25;
 
 impl Puzzle {
     /// Creates a new Puzzle input
     /// It will fail if the year or the day are outside the valid ranges
-    pub fn new(year: i32, day: i32) -> Result<Self> {
+    pub fn new(year: u32, day: u32) -> Result<Self> {
         trace!("Creating new puzzle with year {}, day {}", year, day);
-        
+
         if year < MIN_VALID_YEAR || year > MAX_VALID_YEAR {
             anyhow::bail!(format!(
                 "year should be in [{MIN_VALID_YEAR}-{MAX_VALID_YEAR}] range. \
