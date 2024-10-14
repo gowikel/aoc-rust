@@ -1,6 +1,3 @@
-extern crate pretty_env_logger;
-extern crate log;
-
 use anyhow::{Result};
 use aoc::cli;
 use chrono::Datelike;
