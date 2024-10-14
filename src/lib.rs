@@ -21,6 +21,8 @@ impl Puzzle {
     /// Creates a new Puzzle input
     /// It will fail if the year or the day are outside the valid ranges
     pub fn new(year: i32, day: i32) -> Result<Self> {
+        trace!("Creating new puzzle with year {}, day {}", year, day);
+        
         if year < MIN_VALID_YEAR || year > MAX_VALID_YEAR {
             anyhow::bail!(format!(
                 "year should be in [{MIN_VALID_YEAR}-{MAX_VALID_YEAR}] range. \

@@ -1,6 +1,7 @@
 //! This contains helper functions related to the CLI
 
 use std::cmp::PartialEq;
+use log::trace;
 
 #[cfg(test)]
 use mockall::automock;
@@ -41,6 +42,8 @@ pub fn default_year<T>(date_provider: &T) -> u32
 where
     T: DateInfoProvider,
 {
+    trace!("Calculating default year...");
+    
     let current_month = date_provider.current_month();
     let current_year = date_provider.current_year();
 
@@ -59,6 +62,8 @@ pub fn default_day<T>(provider: &T) -> u32
 where
     T: DateInfoProvider,
 {
+    trace!("Calculating default day...");
+    
     let current_month = provider.current_month();
     let current_day = provider.current_day();
 
