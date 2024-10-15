@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use aoc::{cli, constants, http};
+use aoc::{actions, cli, constants, http};
 use chrono::Datelike;
 use clap::{Parser, Subcommand};
 use log::{info, trace};
@@ -111,11 +111,11 @@ fn main() -> Result<()> {
         cli.year,
         cli.day
     );
-    let puzzle = aoc::Puzzle::new(cli.year, cli.day, HTTPAdapter {})?;
+    let puzzle = aoc::Puzzle::new(cli.year, cli.day)?;
 
     match cli.command {
         Commands::Download {} => {
-            let puzzle_data = puzzle.download()?;
+            let puzzle_data = actions::download_input(HTTPAdapter {}, puzzle)?;
 
             println!("{}", puzzle_data);
         }
