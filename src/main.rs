@@ -95,7 +95,7 @@ enum Commands {
 
 fn main() -> Result<()> {
     pretty_env_logger::init();
-    providers::http::initialize_http_provider(HTTPAdapter {}).unwrap();
+    providers::http::init(HTTPAdapter {}).unwrap();
 
     let cli = Cli::parse();
 

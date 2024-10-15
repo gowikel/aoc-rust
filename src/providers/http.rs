@@ -13,7 +13,7 @@ pub trait HTTPProvider {
 static HTTP_PROVIDER: OnceLock<Arc<dyn HTTPProvider + Send + Sync>> =
     OnceLock::new();
 
-pub fn initialize_http_provider<P>(provider: P) -> Result<(), &'static str>
+pub fn init<P>(provider: P) -> Result<(), &'static str>
 where
     P: HTTPProvider + Send + Sync + 'static,
 {
