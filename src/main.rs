@@ -95,6 +95,7 @@ enum Commands {
 
 fn main() -> Result<()> {
     pretty_env_logger::init();
+    http::initialize_http_provider(HTTPAdapter {}).unwrap();
 
     let cli = Cli::parse();
 
@@ -115,7 +116,7 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Download {} => {
-            let puzzle_data = actions::download_input(HTTPAdapter {}, puzzle)?;
+            let puzzle_data = actions::download_input(puzzle)?;
 
             println!("{}", puzzle_data);
         }
