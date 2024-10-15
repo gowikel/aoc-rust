@@ -1,14 +1,14 @@
 use anyhow::{Context, Result};
-use aoc::{cli, constants};
+use aoc::{cli, constants, http};
 use chrono::Datelike;
 use clap::{Parser, Subcommand};
 use log::{info, trace};
 use std::cmp::PartialEq;
 use std::env;
 
-struct ChronoDataProvider {}
+struct DateAdapter {}
 
-impl cli::DateInfoProvider for ChronoDataProvider {
+impl cli::DateInfoProvider for DateAdapter {
     fn current_year(&self) -> u32 {
         chrono::Local::now().year() as u32
     }
@@ -37,13 +37,37 @@ impl cli::DateInfoProvider for ChronoDataProvider {
 }
 
 fn calculate_default_year() -> u32 {
-    let provider = ChronoDataProvider {};
+    let provider = DateAdapter {};
     cli::default_year(&provider)
 }
 
 fn calculate_default_day() -> u32 {
-    let provider = ChronoDataProvider {};
+    let provider = DateAdapter {};
     cli::default_day(&provider)
+}
+
+struct HTTPAdapter {}
+
+impl http::HTTPProvider for HTTPAdapter {
+    fn get(&self, endpoint: &str) -> Result<String> {
+        let client = reqwest::blocking::Client::default();
+        let aoc_cookie =
+            env::var(constants::AOC_COOKIE).with_context(|| {
+                format!("Missing {} env variable", constants::AOC_COOKIE)
+            })?;
+
+        let response = client
+            .get(endpoint)
+            .header(reqwest::header::COOKIE, aoc_cookie)
+            .send()
+            .with_context(|| format!("Unable to GET {}", endpoint))?;
+
+        let result = response.text().with_context(|| {
+            format!("Unable to parse response from {}", endpoint)
+        })?;
+
+        Ok(result)
+    }
 }
 
 #[derive(Parser)]
@@ -87,7 +111,7 @@ fn main() -> Result<()> {
         cli.year,
         cli.day
     );
-    let puzzle = aoc::Puzzle::new(cli.year, cli.day)?;
+    let puzzle = aoc::Puzzle::new(cli.year, cli.day, HTTPAdapter {})?;
 
     match cli.command {
         Commands::Download {} => {

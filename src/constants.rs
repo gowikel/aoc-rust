@@ -1,3 +1,5 @@
+//! Constants for AoC project
+
 use std::ops::RangeInclusive;
 
 /// Years when I have solutions for the AoC games

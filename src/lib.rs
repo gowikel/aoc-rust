@@ -1,22 +1,31 @@
 pub mod cli;
 pub mod constants;
+pub mod http;
 
-use anyhow::{Context, Result};
+use anyhow::{Result};
 use log::{debug, trace};
-use reqwest::header::COOKIE;
-use std::env;
 use std::fmt::Debug;
 
 /// This identifies any AoC puzzle unequivocally
-pub struct Puzzle {
+pub struct Puzzle<T>
+where
+    T: http::HTTPProvider,
+{
     year: u32,
     day: u32,
+    http_provider: T,
 }
 
-impl Puzzle {
+impl<T> Puzzle<T>
+where
+    T: http::HTTPProvider,
+{
     /// Creates a new Puzzle input
     /// It will fail if the year or the day are outside the valid ranges
-    pub fn new(year: u32, day: u32) -> Result<Self> {
+    pub fn new(year: u32, day: u32, http_provider: T) -> Result<Self>
+    where
+        T: http::HTTPProvider,
+    {
         trace!("Creating new puzzle with year {}, day {}", year, day);
 
         if !constants::VALID_YEARS.contains(&year) {
@@ -35,7 +44,11 @@ impl Puzzle {
             ));
         }
 
-        Ok(Self { year, day })
+        Ok(Self {
+            year,
+            day,
+            http_provider,
+        })
     }
 
     /// Downloads the main puzzle input for this puzzle
@@ -45,33 +58,22 @@ impl Puzzle {
         let base_url = "https://adventofcode.com";
         let endpoint =
             format!("{base_url}/{}/day/{}/input", self.year, self.day);
-        let cookie = env::var(constants::AOC_COOKIE)
-            .with_context(|| format!("{} not set", constants::AOC_COOKIE))?;
-        let client = reqwest::blocking::Client::default();
 
         debug!("endpoint: {}", endpoint);
 
-        let response = client
-            .get(&endpoint)
-            .header(COOKIE, cookie)
-            .send()
-            .with_context(|| {
-                format!(
-                    "Unable to download puzzle for {}/{}",
-                    self.year, self.day
-                )
-            })?;
+        let response = self.http_provider.get(&endpoint)?;
 
         debug!("response: {:?}", response);
         trace!("parsing text and returning");
 
-        Ok(response
-            .text()
-            .with_context(|| "Unable to parse response text")?)
+        Ok(response)
     }
 }
 
-impl Debug for Puzzle {
+impl<T> Debug for Puzzle<T>
+where
+    T: http::HTTPProvider,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Puzzle {{ year: {}, day: {} }}", self.year, self.day)
     }
