@@ -1,4 +1,4 @@
-use super::http::{get_http_provider};
+use super::providers::http::{get_http_provider};
 use super::Puzzle;
 use anyhow::Result;
 use log::{debug, trace};

@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use aoc::{actions, cli, constants, http};
+use aoc::{actions, cli, constants, providers};
 use chrono::Datelike;
 use clap::{Parser, Subcommand};
 use log::{info, trace};
@@ -48,7 +48,7 @@ fn calculate_default_day() -> u32 {
 
 struct HTTPAdapter {}
 
-impl http::HTTPProvider for HTTPAdapter {
+impl providers::http::HTTPProvider for HTTPAdapter {
     fn get(&self, endpoint: &str) -> Result<String> {
         let client = reqwest::blocking::Client::default();
         let aoc_cookie =
@@ -95,7 +95,7 @@ enum Commands {
 
 fn main() -> Result<()> {
     pretty_env_logger::init();
-    http::initialize_http_provider(HTTPAdapter {}).unwrap();
+    providers::http::initialize_http_provider(HTTPAdapter {}).unwrap();
 
     let cli = Cli::parse();
 

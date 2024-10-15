@@ -1,7 +1,7 @@
 pub mod actions;
 pub mod cli;
 pub mod constants;
-pub mod http;
+pub mod providers;
 
 use anyhow::Result;
 use log::trace;
