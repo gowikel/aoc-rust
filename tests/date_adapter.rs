@@ -1,14 +1,14 @@
-use chrono::Datelike;
 use aoc::providers::date;
 use aoc::providers::date::{DateInfoProvider, Month};
+use chrono::Datelike;
 
 #[test]
 fn test_current_year() {
     let current = chrono::Local::now().year() as u32;
     let adapter = date::default_date_provider();
-    
+
     let result = adapter.current_year();
-    
+
     assert_eq!(result, current);
 }
 
@@ -16,7 +16,7 @@ fn test_current_year() {
 fn test_current_month() {
     let current = chrono::Local::now().month();
     let adapter = date::default_date_provider();
-    
+
     let current = match current {
         1 => Month::January,
         2 => Month::February,
@@ -32,9 +32,9 @@ fn test_current_month() {
         12 => Month::December,
         _ => unreachable!("This should not be reachable"),
     };
-    
+
     let result = adapter.current_month();
-    
+
     assert_eq!(result, current);
 }
 
@@ -43,6 +43,6 @@ fn test_current_day() {
     let current = chrono::Local::now().day();
     let adapter = date::default_date_provider();
     let result = adapter.current_day();
-    
+
     assert_eq!(result, current);
 }
