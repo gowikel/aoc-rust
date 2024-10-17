@@ -12,6 +12,7 @@ pub trait HTTPProvider {
     fn get(&self, endpoint: &str) -> Result<String>;
 }
 
+#[derive(Default)]
 struct HTTPAdapter {}
 
 impl HTTPProvider for HTTPAdapter {
@@ -36,12 +37,6 @@ impl HTTPProvider for HTTPAdapter {
         trace!("Response: {:?}", result);
 
         Ok(result)
-    }
-}
-
-impl Default for HTTPAdapter {
-    fn default() -> Self {
-        HTTPAdapter {}
     }
 }
 
