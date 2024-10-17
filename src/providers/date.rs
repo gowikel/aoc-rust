@@ -2,7 +2,6 @@
 use unimock::unimock;
 
 use chrono::Datelike;
-use log::trace;
 
 /// The months of the year, each one is one variant.
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -33,6 +32,7 @@ pub trait DateInfoProvider {
 }
 
 /// Implementation of the `DateInfoProvider` trait
+#[derive(Default)]
 pub struct DateAdapter {}
 
 impl DateInfoProvider for DateAdapter {
@@ -60,13 +60,6 @@ impl DateInfoProvider for DateAdapter {
 
     fn current_day(&self) -> u32 {
         chrono::Local::now().day()
-    }
-}
-
-impl Default for DateAdapter {
-    fn default() -> Self {
-        trace!("Instantiating new DateAdapter...");
-        DateAdapter {}
     }
 }
 
