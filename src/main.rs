@@ -1,48 +1,17 @@
 use anyhow::{Context, Result};
 use aoc::{actions, cli, constants, providers};
-use chrono::Datelike;
 use clap::{Parser, Subcommand};
 use log::{info, trace};
 use std::cmp::PartialEq;
 use std::env;
 
-struct DateAdapter {}
-
-impl cli::DateInfoProvider for DateAdapter {
-    fn current_year(&self) -> u32 {
-        chrono::Local::now().year() as u32
-    }
-
-    fn current_month(&self) -> cli::Month {
-        match chrono::Local::now().month() {
-            1 => cli::Month::January,
-            2 => cli::Month::February,
-            3 => cli::Month::March,
-            4 => cli::Month::April,
-            5 => cli::Month::May,
-            6 => cli::Month::June,
-            7 => cli::Month::July,
-            8 => cli::Month::August,
-            9 => cli::Month::September,
-            10 => cli::Month::October,
-            11 => cli::Month::November,
-            12 => cli::Month::December,
-            _ => unreachable!("Month should never get here"),
-        }
-    }
-
-    fn current_day(&self) -> u32 {
-        chrono::Local::now().day()
-    }
-}
-
 fn calculate_default_year() -> u32 {
-    let provider = DateAdapter {};
+    let provider = providers::date::default_date_provider();
     cli::default_year(&provider)
 }
 
 fn calculate_default_day() -> u32 {
-    let provider = DateAdapter {};
+    let provider = providers::date::default_date_provider();
     cli::default_day(&provider)
 }
 

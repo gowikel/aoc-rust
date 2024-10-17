@@ -1,8 +1,8 @@
 //! Dependencies to make HTTP requests
 
 use anyhow::Result as AnyhowResult;
-use std::sync::{Arc, OnceLock};
 use log::trace;
+use std::sync::{Arc, OnceLock};
 
 /// Trait to build and send HTTP Requests (not async)
 pub trait HTTPProvider {
