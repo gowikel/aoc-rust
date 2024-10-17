@@ -24,6 +24,7 @@ where
 /// It should be the current day if:
 /// - We are on December AND
 /// - We are between 1 and 25
+///
 /// Otherwise, it will be 1
 pub fn default_day<D>(deps: &D) -> u32
 where
