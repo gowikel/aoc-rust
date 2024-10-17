@@ -1,4 +1,4 @@
-use super::providers::http::{get_http_provider};
+use super::providers::http::get_http_provider;
 use super::Puzzle;
 use anyhow::Result;
 use log::{debug, trace};
@@ -19,7 +19,7 @@ pub fn download_input(puzzle: Puzzle) -> Result<String> {
         format!("{base_url}/{}/day/{}/input", puzzle.year, puzzle.day);
 
     debug!("endpoint: {}", endpoint);
-    
+
     let response = http_provider.get(&endpoint)?;
 
     debug!("response: {:?}", response);
