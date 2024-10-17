@@ -66,7 +66,7 @@ impl DateInfoProvider for DateAdapter {
 impl Default for DateAdapter {
     fn default() -> Self {
         trace!("Instantiating new DateAdapter...");
-        DateAdapter{}
+        DateAdapter {}
     }
 }
 

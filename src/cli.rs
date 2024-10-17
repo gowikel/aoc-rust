@@ -181,15 +181,16 @@ mod tests {
             .each_call(matching!())
             .returns(month)
             .once();
-        
+
         let current_day_clause = DateInfoProviderMock::current_day
             .each_call(matching!())
             .returns(10u32)
             .once();
-        
-        let deps_mock = Unimock::new((current_month_clause, current_day_clause));
+
+        let deps_mock =
+            Unimock::new((current_month_clause, current_day_clause));
         let result = default_day(&deps_mock);
-        
+
         assert_eq!(result, 1u32);
     }
 }

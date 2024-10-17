@@ -1,30 +1,50 @@
 //! Dependencies to make HTTP requests
 
-use anyhow::Result as AnyhowResult;
+use crate::constants;
+use anyhow::{Context, Result};
 use log::trace;
-use std::sync::{Arc, OnceLock};
+use reqwest::blocking::Client;
+use std::env;
 
 /// Trait to build and send HTTP Requests (not async)
 pub trait HTTPProvider {
     /// Prepares a GET request to the specified endpoint
-    fn get(&self, endpoint: &str) -> AnyhowResult<String>;
+    fn get(&self, endpoint: &str) -> Result<String>;
 }
 
-static HTTP_PROVIDER: OnceLock<Arc<dyn HTTPProvider + Send + Sync>> =
-    OnceLock::new();
+struct HTTPAdapter {}
 
-pub fn init<P>(provider: P) -> Result<(), &'static str>
-where
-    P: HTTPProvider + Send + Sync + 'static,
-{
-    trace!("Initializing HTTP provider...");
-    HTTP_PROVIDER
-        .set(Arc::new(provider))
-        .map_err(|_| "Unable to initialize the HTTP Provider")?;
+impl HTTPProvider for HTTPAdapter {
+    fn get(&self, endpoint: &str) -> Result<String> {
+        trace!("GET {}...", endpoint);
+        let client = Client::default();
+        let aoc_cookie =
+            env::var(constants::AOC_COOKIE).with_context(|| {
+                format!("Missing {} env variable", constants::AOC_COOKIE)
+            })?;
 
-    Ok(())
+        let response = client
+            .get(endpoint)
+            .header(reqwest::header::COOKIE, aoc_cookie)
+            .send()
+            .with_context(|| format!("Unable to GET {}", endpoint))?;
+
+        let result = response.text().with_context(|| {
+            format!("Unable to parse response from {}", endpoint)
+        })?;
+
+        trace!("Response: {:?}", result);
+
+        Ok(result)
+    }
 }
 
-pub fn get_http_provider() -> Option<Arc<dyn HTTPProvider + Send + Sync>> {
-    HTTP_PROVIDER.get().cloned()
+impl Default for HTTPAdapter {
+    fn default() -> Self {
+        HTTPAdapter {}
+    }
+}
+
+pub fn get_default_http_providerr() -> impl HTTPProvider {
+    HTTPAdapter::default()
 }

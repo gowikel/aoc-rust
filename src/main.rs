@@ -15,30 +15,6 @@ fn calculate_default_day() -> u32 {
     cli::default_day(&provider)
 }
 
-struct HTTPAdapter {}
-
-impl providers::http::HTTPProvider for HTTPAdapter {
-    fn get(&self, endpoint: &str) -> Result<String> {
-        let client = reqwest::blocking::Client::default();
-        let aoc_cookie =
-            env::var(constants::AOC_COOKIE).with_context(|| {
-                format!("Missing {} env variable", constants::AOC_COOKIE)
-            })?;
-
-        let response = client
-            .get(endpoint)
-            .header(reqwest::header::COOKIE, aoc_cookie)
-            .send()
-            .with_context(|| format!("Unable to GET {}", endpoint))?;
-
-        let result = response.text().with_context(|| {
-            format!("Unable to parse response from {}", endpoint)
-        })?;
-
-        Ok(result)
-    }
-}
-
 #[derive(Parser)]
 #[command(version, author, about)]
 struct Cli {
@@ -64,7 +40,6 @@ enum Commands {
 
 fn main() -> Result<()> {
     pretty_env_logger::init();
-    providers::http::init(HTTPAdapter {}).unwrap();
 
     let cli = Cli::parse();
 
@@ -85,7 +60,10 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Download {} => {
-            let puzzle_data = actions::download_input(puzzle)?;
+            let puzzle_data = actions::download_input(
+                &providers::http::get_default_http_providerr(),
+                puzzle,
+            )?;
 
             println!("{}", puzzle_data);
         }
