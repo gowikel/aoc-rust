@@ -40,6 +40,6 @@ impl HTTPProvider for HTTPAdapter {
     }
 }
 
-pub fn get_default_http_providerr() -> impl HTTPProvider {
+pub fn get_default_http_provider() -> impl HTTPProvider {
     HTTPAdapter::default()
 }

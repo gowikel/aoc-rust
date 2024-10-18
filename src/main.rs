@@ -61,7 +61,7 @@ fn main() -> Result<()> {
     match cli.command {
         Commands::Download {} => {
             let puzzle_data = actions::download_input(
-                &providers::http::get_default_http_providerr(),
+                &providers::http::get_default_http_provider(),
                 puzzle,
             )?;
 
