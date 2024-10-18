@@ -1,9 +1,9 @@
-use anyhow::{Context, Result};
 use aoc::{actions, cli, constants, providers};
 use clap::{Parser, Subcommand};
 use log::{info, trace};
 use std::cmp::PartialEq;
 use std::env;
+use std::error::Error;
 
 fn calculate_default_year() -> u32 {
     let provider = providers::date::default_date_provider();
@@ -38,7 +38,7 @@ enum Commands {
     Download,
 }
 
-fn main() -> Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     pretty_env_logger::init();
 
     let cli = Cli::parse();
@@ -46,9 +46,8 @@ fn main() -> Result<()> {
     info!("Application started...");
     trace!("Checking Download requirements are met...");
     if Commands::Download == cli.command {
-        env::var(constants::AOC_COOKIE).with_context(|| {
-            format!("{} is required to make a download.", constants::AOC_COOKIE)
-        })?;
+        env::var(constants::AOC_COOKIE)
+            .map_err(|_e| "Missing AOC_COOKIE variable")?;
     }
 
     trace!(
