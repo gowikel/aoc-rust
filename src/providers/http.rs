@@ -1,5 +1,4 @@
 //! Dependencies to make HTTP requests
-use crate::constants;
 use log::trace;
 use reqwest::blocking::Client;
 use std::env;
