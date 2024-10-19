@@ -8,7 +8,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-clap = { version = "4.5.20", features = ["derive"] }
+clap = { version = "4.5.20", features = ["derive", "env"] }
 reqwest = { version = "0.12", features = ["blocking"] }
 thiserror = "1.0.64"
 log = "0.4.22"
