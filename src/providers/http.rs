@@ -1,7 +1,6 @@
 //! Dependencies to make HTTP requests
 use log::trace;
 use reqwest::blocking::Client;
-use std::env;
 use thiserror::Error;
 
 /// Errors from the HTTP Provider
