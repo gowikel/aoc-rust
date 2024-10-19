@@ -3,6 +3,7 @@ pub mod cli;
 pub mod constants;
 pub mod providers;
 
+use clap::ValueEnum;
 use log::trace;
 use std::fmt::Debug;
 use thiserror::Error;
@@ -21,6 +22,14 @@ pub enum PuzzleError {
 
     #[error("Invalid day: {0}")]
     InvalidDay(String),
+}
+
+/// Which solution should the solver solve?
+#[derive(Copy, Clone, PartialEq, Eq, Debug, ValueEnum)]
+pub enum Execute {
+    ALL,
+    P1,
+    P2,
 }
 
 impl Puzzle {

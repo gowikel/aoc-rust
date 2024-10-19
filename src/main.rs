@@ -1,5 +1,5 @@
-use aoc::{actions, cli, constants, providers, providers::http::HTTPProvider};
-use clap::{ArgAction, Args, Parser, Subcommand};
+use aoc::{actions, cli, providers, providers::http::HTTPProvider, Execute};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::{info, trace};
 use std::{error::Error, path::PathBuf};
 
@@ -11,6 +11,16 @@ fn calculate_default_year() -> u32 {
 fn calculate_default_day() -> u32 {
     let provider = providers::date::default_date_provider();
     cli::default_day(&provider)
+}
+
+fn validate_is_file(data: &str) -> Result<PathBuf, String> {
+    let path = PathBuf::from(data);
+
+    if !path.is_file() {
+        return Err(format!("{} is not a file", path.to_str().unwrap()));
+    }
+
+    Ok(path)
 }
 
 #[derive(Parser)]
@@ -29,11 +39,13 @@ struct Cli {
     #[command(subcommand)]
     command: Commands,
 }
-
 #[derive(Subcommand, Debug, PartialEq)]
 enum Commands {
     /// Downloads the specified puzzle input from AoC
     Download(DownloadArgs),
+    /// Solve the specified puzzle
+    Solve(SolveArgs),
+}
 
 #[derive(Args, PartialEq, Debug)]
 struct DownloadArgs {
@@ -41,6 +53,14 @@ struct DownloadArgs {
     #[arg(long, short, env, hide_env_values = true)]
     aoc_cookie: String,
 }
+
+#[derive(Args, PartialEq, Debug)]
+struct SolveArgs {
+    #[arg(value_parser = validate_is_file)]
+    puzzle_input: PathBuf,
+
+    #[arg(value_enum, default_value_t = Execute::ALL)]
+    execute: Execute,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -67,6 +87,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             let puzzle_data = actions::download_input(&http_provider, puzzle)?;
 
             println!("{}", puzzle_data);
+        }
+        Commands::Solve(args) => {
+            println!("Solving puzzle... {:?}", args.puzzle_input);
         }
     }
 
