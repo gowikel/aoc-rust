@@ -1,7 +1,7 @@
-use aoc::{actions, cli, constants, providers};
-use clap::{Parser, Subcommand};
+use aoc::{actions, cli, constants, providers, providers::http::HTTPProvider};
+use clap::{ArgAction, Args, Parser, Subcommand};
 use log::{info, trace};
-use std::{env, error::Error};
+use std::{error::Error, path::PathBuf};
 
 fn calculate_default_year() -> u32 {
     let provider = providers::date::default_date_provider();
@@ -33,7 +33,14 @@ struct Cli {
 #[derive(Subcommand, Debug, PartialEq)]
 enum Commands {
     /// Downloads the specified puzzle input from AoC
-    Download,
+    Download(DownloadArgs),
+
+#[derive(Args, PartialEq, Debug)]
+struct DownloadArgs {
+    /// AOC_COOKIE required to download the puzzle input. Can be set in an envvar.
+    #[arg(long, short, env, hide_env_values = true)]
+    aoc_cookie: String,
+}
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -42,11 +49,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
     info!("Application started...");
-    trace!("Checking Download requirements are met...");
-    if Commands::Download == cli.command {
-        env::var(constants::AOC_COOKIE)
-            .map_err(|_e| "Missing AOC_COOKIE variable")?;
-    }
 
     trace!(
         "Initializing the puzzle with year: {} and day: {}...",
@@ -56,11 +58,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let puzzle = aoc::Puzzle::new(cli.year, cli.day)?;
 
     match cli.command {
-        Commands::Download {} => {
-            let puzzle_data = actions::download_input(
-                &providers::http::get_default_http_provider(),
-                puzzle,
-            )?;
+        Commands::Download(args) => {
+            let mut http_provider =
+                providers::http::get_default_http_provider();
+
+            http_provider.set_cookie(args.aoc_cookie);
+
+            let puzzle_data = actions::download_input(&http_provider, puzzle)?;
 
             println!("{}", puzzle_data);
         }

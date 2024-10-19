@@ -36,23 +36,36 @@ mod tests {
 
     struct HTTPProviderMock {
         data: Result<String, HTTPError>,
+        cookie: Option<String>,
     }
 
     impl HTTPProviderMock {
         fn success(data: &str) -> Self {
             Self {
                 data: Ok(data.to_string()),
+                cookie: None,
             }
         }
 
         fn failed(error: HTTPError) -> Self {
-            Self { data: Err(error) }
+            Self {
+                data: Err(error),
+                cookie: None,
+            }
         }
     }
 
     impl HTTPProvider for HTTPProviderMock {
         fn get(&self, _endpoint: &str) -> Result<String, HTTPError> {
             self.data.clone()
+        }
+
+        fn set_cookie(&mut self, cookie: String) {
+            self.cookie = Some(cookie);
+        }
+
+        fn get_cookie(&self) -> Option<String> {
+            self.cookie.clone()
         }
     }
 
@@ -66,18 +79,16 @@ mod tests {
     }
 
     #[test]
-    fn test_missing_aoc_env_var() {
+    fn test_fetch_error() {
         let puzzle = Puzzle { year: 2023, day: 1 };
-        let deps = HTTPProviderMock::failed(HTTPError::MissingEnvVarError(
-            std::env::VarError::NotPresent,
+        let deps = HTTPProviderMock::failed(HTTPError::FetchError(
+            "Unable to fetch data".into(),
         ));
         let result = download_input(&deps, puzzle);
 
         assert_eq!(
             result,
-            Err(HTTPError::MissingEnvVarError(
-                std::env::VarError::NotPresent
-            ))
+            Err(HTTPError::FetchError("Unable to fetch data".into()))
         );
     }
 }

@@ -8,8 +8,8 @@ use thiserror::Error;
 /// Errors from the HTTP Provider
 #[derive(Error, Debug, Clone, PartialEq)]
 pub enum HTTPError {
-    #[error("The AOC cookie is missing: {0}")]
-    MissingEnvVarError(#[from] std::env::VarError),
+    #[error("Missing required envvar: {0}")]
+    MissingEnvVarError(String),
 
     #[error("Unable to fetch: {0}")]
     FetchError(String),
@@ -22,16 +22,26 @@ pub enum HTTPError {
 pub trait HTTPProvider {
     /// Prepares a GET request to the specified endpoint
     fn get(&self, endpoint: &str) -> Result<String, HTTPError>;
+
+    /// Adds a cookie that later will be used to fetch the data
+    fn set_cookie(&mut self, cookie: String);
+
+    /// Retrieves the stored cookie
+    fn get_cookie(&self) -> Option<String>;
 }
 
 #[derive(Default)]
-struct HTTPAdapter {}
+struct HTTPAdapter {
+    aoc_cookie: Option<String>,
+}
 
 impl HTTPProvider for HTTPAdapter {
     fn get(&self, endpoint: &str) -> Result<String, HTTPError> {
         trace!("GET {}...", endpoint);
         let client = Client::default();
-        let aoc_cookie = env::var(constants::AOC_COOKIE)?;
+        let aoc_cookie = self.get_cookie().ok_or(
+            HTTPError::MissingEnvVarError("AOC_COOKIE not set".into()),
+        )?;
 
         let response = client
             .get(endpoint)
@@ -52,6 +62,14 @@ impl HTTPProvider for HTTPAdapter {
         trace!("Response: {:?}", result);
 
         Ok(result)
+    }
+
+    fn set_cookie(&mut self, cookie: String) {
+        self.aoc_cookie = Some(cookie);
+    }
+
+    fn get_cookie(&self) -> Option<String> {
+        self.aoc_cookie.clone()
     }
 }
 
