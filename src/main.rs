@@ -28,12 +28,12 @@ fn validate_is_file(data: &str) -> Result<PathBuf, String> {
 struct Cli {
     /// Selected year.
     /// Defaults to current year on December, last year otherwise.
-    #[arg(long, short, default_value_t = calculate_default_year())]
+    #[arg(long, short, default_value_t = calculate_default_year(), global = true)]
     year: u32,
 
     /// Selected day.
     /// Defaults to current day on December between 1-25, 1 otherwise.
-    #[arg(long, short, default_value_t = calculate_default_day())]
+    #[arg(long, short, default_value_t = calculate_default_day(), global = true)]
     day: u32,
 
     #[command(subcommand)]
