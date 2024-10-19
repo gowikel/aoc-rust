@@ -1,5 +1,8 @@
-use aoc::{actions, cli, providers, providers::http::HTTPProvider, Execute};
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use aoc::{
+    actions, cli, providers, providers::http::HTTPProvider, solvers, Execute,
+    Puzzle,
+};
+use clap::{Args, Parser, Subcommand};
 use log::{info, trace};
 use std::{error::Error, path::PathBuf};
 
@@ -79,6 +82,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     match cli.command {
         Commands::Download(args) => {
+            trace!("Download command executing...");
+
             let mut http_provider =
                 providers::http::get_default_http_provider();
 
@@ -89,9 +94,29 @@ fn main() -> Result<(), Box<dyn Error>> {
             println!("{}", puzzle_data);
         }
         Commands::Solve(args) => {
-            println!("Solving puzzle... {:?}", args.puzzle_input);
+            trace!("Solve command executing for year {}...", puzzle.year());
+
+            match puzzle.year() {
+                2023 => run_y2023_solver(puzzle, args.execute, "".to_string()),
+                _ => {
+                    eprintln!("{} not implemented", cli.year);
+                    std::process::exit(exitcode::DATAERR);
+                }
+            }
         }
     }
 
     Ok(())
+}
+
+fn run_y2023_solver(puzzle: Puzzle, execute: Execute, input: String) {
+    trace!("Running y2023 solver...");
+
+    match puzzle.day() {
+        1 => solvers::y2023::day01::solve(execute, input),
+        _ => {
+            eprintln!("{} is not implemented!", puzzle.day());
+            std::process::exit(exitcode::UNAVAILABLE)
+        }
+    };
 }

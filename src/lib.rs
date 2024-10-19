@@ -2,8 +2,10 @@ pub mod actions;
 pub mod cli;
 pub mod constants;
 pub mod providers;
+pub mod solvers;
 
 use clap::ValueEnum;
+use derive_more::Display;
 use log::trace;
 use std::fmt::Debug;
 use thiserror::Error;
@@ -25,7 +27,7 @@ pub enum PuzzleError {
 }
 
 /// Which solution should the solver solve?
-#[derive(Copy, Clone, PartialEq, Eq, Debug, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Display, ValueEnum)]
 pub enum Execute {
     ALL,
     P1,
@@ -55,6 +57,16 @@ impl Puzzle {
         }
 
         Ok(Self { year, day })
+    }
+
+    /// Returns the stored year in the puzzle
+    pub fn year(&self) -> u32 {
+        self.year
+    }
+
+    /// Returns the stored day in the puzzle
+    pub fn day(&self) -> u32 {
+        self.day
     }
 }
 
