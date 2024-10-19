@@ -17,4 +17,3 @@ chrono = "0.4.38"
 
 [dev-dependencies]
 rstest = "0.23.0"
-unimock = "0.6.7"

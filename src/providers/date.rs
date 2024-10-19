@@ -1,6 +1,3 @@
-#[cfg(test)]
-use unimock::unimock;
-
 use chrono::Datelike;
 
 /// The months of the year, each one is one variant.
@@ -21,7 +18,6 @@ pub enum Month {
 }
 
 /// A trait for providing the current date components such as year and month.
-#[cfg_attr(test, unimock(api=DateInfoProviderMock))]
 pub trait DateInfoProvider {
     /// Returns the current year.
     fn current_year(&self) -> u32;

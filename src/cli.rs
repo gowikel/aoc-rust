@@ -44,10 +44,34 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::super::providers::date::DateInfoProviderMock;
     use super::*;
     use rstest::rstest;
-    use unimock::{matching, MockFn, Unimock};
+
+    struct DateInfoProviderMock {
+        month: Month,
+        year: u32,
+        day: u32,
+    }
+
+    impl DateInfoProviderMock {
+        fn new(year: u32, month: Month, day: u32) -> Self {
+            Self { year, month, day }
+        }
+    }
+
+    impl DateInfoProvider for DateInfoProviderMock {
+        fn current_year(&self) -> u32 {
+            self.year
+        }
+
+        fn current_month(&self) -> Month {
+            self.month
+        }
+
+        fn current_day(&self) -> u32 {
+            self.day
+        }
+    }
 
     #[rstest]
     #[case(Month::January)]
@@ -62,37 +86,15 @@ mod tests {
     #[case(Month::October)]
     #[case(Month::November)]
     fn default_year_non_december(#[case] month: Month) {
-        let current_month_clause = DateInfoProviderMock::current_month
-            .each_call(matching!())
-            .returns(month)
-            .once();
-
-        let current_year_clause = DateInfoProviderMock::current_year
-            .each_call(matching!())
-            .returns(2024u32)
-            .once();
-
-        let mocked_deps =
-            Unimock::new((current_month_clause, current_year_clause));
+        let mocked_deps = DateInfoProviderMock::new(2024, month, 15);
         let result = default_year(&mocked_deps);
 
         assert_eq!(result, 2023)
     }
     #[rstest]
     fn default_year_on_december() {
-        let current_month_clause = DateInfoProviderMock::current_month
-            .each_call(matching!())
-            .returns(Month::December)
-            .once();
-
-        let current_year_clause = DateInfoProviderMock::current_year
-            .each_call(matching!())
-            .returns(2024u32)
-            .once();
-
-        let deps_mock =
-            Unimock::new((current_month_clause, current_year_clause));
-        let result = default_year(&deps_mock);
+        let mocked_deps = DateInfoProviderMock::new(2024, Month::December, 15);
+        let result = default_year(&mocked_deps);
 
         assert_eq!(result, 2024);
     }
@@ -123,19 +125,8 @@ mod tests {
     #[case(24)]
     #[case(25)]
     fn default_day_on_december_in_range(#[case] day: u32) {
-        let current_month_clause = DateInfoProviderMock::current_month
-            .each_call(matching!())
-            .returns(Month::December)
-            .once();
-
-        let current_day_clause = DateInfoProviderMock::current_day
-            .each_call(matching!())
-            .returns(day)
-            .once();
-
-        let deps_mock =
-            Unimock::new((current_month_clause, current_day_clause));
-        let result = default_day(&deps_mock);
+        let mocked_deps = DateInfoProviderMock::new(2024, Month::December, day);
+        let result = default_day(&mocked_deps);
 
         assert_eq!(result, day);
     }
@@ -148,19 +139,8 @@ mod tests {
     #[case(30)]
     #[case(31)]
     fn default_day_december_outside_range(#[case] day: u32) {
-        let current_month_clause = DateInfoProviderMock::current_month
-            .each_call(matching!())
-            .returns(Month::December)
-            .once();
-
-        let current_day_clause = DateInfoProviderMock::current_day
-            .each_call(matching!())
-            .returns(day)
-            .once();
-
-        let deps_mock =
-            Unimock::new((current_month_clause, current_day_clause));
-        let result = default_day(&deps_mock);
+        let mocked_deps = DateInfoProviderMock::new(2024, Month::December, day);
+        let result = default_day(&mocked_deps);
 
         assert_eq!(result, 1u32);
     }
@@ -178,19 +158,8 @@ mod tests {
     #[case(Month::October)]
     #[case(Month::November)]
     fn default_day_outside_december(#[case] month: Month) {
-        let current_month_clause = DateInfoProviderMock::current_month
-            .each_call(matching!())
-            .returns(month)
-            .once();
-
-        let current_day_clause = DateInfoProviderMock::current_day
-            .each_call(matching!())
-            .returns(10u32)
-            .once();
-
-        let deps_mock =
-            Unimock::new((current_month_clause, current_day_clause));
-        let result = default_day(&deps_mock);
+        let mocked_deps = DateInfoProviderMock::new(2024, month, 10);
+        let result = default_day(&mocked_deps);
 
         assert_eq!(result, 1u32);
     }
