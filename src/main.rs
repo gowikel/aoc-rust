@@ -1,9 +1,7 @@
 use aoc::{actions, cli, constants, providers};
 use clap::{Parser, Subcommand};
 use log::{info, trace};
-use std::cmp::PartialEq;
-use std::env;
-use std::error::Error;
+use std::{env, error::Error};
 
 fn calculate_default_year() -> u32 {
     let provider = providers::date::default_date_provider();

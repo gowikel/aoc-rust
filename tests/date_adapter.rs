@@ -1,5 +1,7 @@
-use aoc::providers::date;
-use aoc::providers::date::{DateInfoProvider, Month};
+use aoc::{
+    providers::date,
+    providers::date::{DateInfoProvider, Month},
+};
 use chrono::Datelike;
 
 #[test]

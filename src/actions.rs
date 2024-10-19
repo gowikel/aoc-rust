@@ -1,5 +1,7 @@
-use super::providers::http::{HTTPError, HTTPProvider};
-use super::Puzzle;
+use crate::{
+    providers::http::{HTTPError, HTTPProvider},
+    Puzzle,
+};
 use log::{debug, trace};
 
 /// Downloads the main puzzle input for this puzzle
