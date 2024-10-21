@@ -1,10 +1,11 @@
 use aoc::{
-    actions, cli, providers, providers::http::HTTPProvider, solvers, Execute,
-    Puzzle,
+    actions, cli, providers,
+    providers::{data::FileOpener, http::HTTPProvider},
+    solvers, Execute, Puzzle,
 };
 use clap::{Args, Parser, Subcommand};
 use log::{info, trace};
-use std::{error::Error, path::PathBuf};
+use std::{error::Error, io::Read, path::PathBuf};
 
 fn calculate_default_year() -> u32 {
     let provider = providers::date::default_date_provider();
@@ -96,8 +97,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         Commands::Solve(args) => {
             trace!("Solve command executing for year {}...", puzzle.year());
 
+            let data_provider =
+                providers::data::get_default_data_implementation();
+            let input = data_provider.open_file(args.puzzle_input)?;
+
             match puzzle.year() {
-                2023 => run_y2023_solver(puzzle, args.execute, "".to_string()),
+                2023 => run_y2023_solver(puzzle, args.execute, input),
                 _ => {
                     eprintln!("{} not implemented", cli.year);
                     std::process::exit(exitcode::DATAERR);
@@ -109,7 +114,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run_y2023_solver(puzzle: Puzzle, execute: Execute, input: String) {
+fn run_y2023_solver<R>(puzzle: Puzzle, execute: Execute, input: R)
+where
+    R: Read,
+{
     trace!("Running y2023 solver...");
 
     match puzzle.day() {
