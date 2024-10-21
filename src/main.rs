@@ -3,6 +3,7 @@ use aoc::{
     Puzzle,
 };
 use clap::{Args, Parser, Subcommand};
+use human_panic::setup_panic;
 use log::{info, trace};
 use std::{error::Error, path::PathBuf};
 
@@ -67,6 +68,7 @@ struct SolveArgs {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    setup_panic!();
     pretty_env_logger::init();
 
     let cli = Cli::parse();
