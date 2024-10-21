@@ -1,5 +1,5 @@
 use crate::{
-    providers::fs::FileOpener,
+    providers::data::FileOpener,
     providers::http::{HTTPError, HTTPProvider},
     Puzzle,
 };
@@ -113,7 +113,7 @@ mod tests {
 
     mod open_file_buffer {
         use super::super::*;
-        use crate::providers::fs::FileOpener;
+        use crate::providers::data::FileOpener;
         use std::io::{Cursor, Read};
         use std::path::{Path, PathBuf};
 

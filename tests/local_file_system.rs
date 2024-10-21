@@ -1,4 +1,4 @@
-use aoc::providers::fs::{FileOpener, LocalFileSystem};
+use aoc::providers::data::{FileOpener, LocalFileSystem};
 use std::io::{Read, Write};
 use tempfile::NamedTempFile;
 
