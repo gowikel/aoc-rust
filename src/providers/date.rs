@@ -18,7 +18,7 @@ pub enum Month {
 }
 
 /// A trait for providing the current date components such as year and month.
-pub trait DateInfoProvider {
+pub trait CurrentDateProvider {
     /// Returns the current year.
     fn current_year(&self) -> u32;
     /// Returns the current month.
@@ -31,7 +31,7 @@ pub trait DateInfoProvider {
 #[derive(Default)]
 pub struct DateAdapter {}
 
-impl DateInfoProvider for DateAdapter {
+impl CurrentDateProvider for DateAdapter {
     fn current_year(&self) -> u32 {
         chrono::Local::now().year() as u32
     }
@@ -60,6 +60,6 @@ impl DateInfoProvider for DateAdapter {
 }
 
 /// Returns the default implementation for the `DateInfoProvider`
-pub fn default_date_provider() -> impl DateInfoProvider {
+pub fn default_date_provider() -> impl CurrentDateProvider {
     DateAdapter::default()
 }

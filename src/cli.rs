@@ -1,13 +1,13 @@
 //! This contains helper functions related to the CLI
 
-use crate::providers::date::{DateInfoProvider, Month};
+use crate::providers::date::{CurrentDateProvider, Month};
 use log::trace;
 
 /// It calculates the default year.
 /// It should be the current year on December; and the previous year otherwise.
 pub fn default_year<D>(deps: &D) -> u32
 where
-    D: DateInfoProvider,
+    D: CurrentDateProvider,
 {
     trace!("Calculating default year...");
 
@@ -28,7 +28,7 @@ where
 /// Otherwise, it will be 1
 pub fn default_day<D>(deps: &D) -> u32
 where
-    D: DateInfoProvider,
+    D: CurrentDateProvider,
 {
     trace!("Calculating default day...");
 
@@ -59,7 +59,7 @@ mod tests {
         }
     }
 
-    impl DateInfoProvider for DateInfoProviderMock {
+    impl CurrentDateProvider for DateInfoProviderMock {
         fn current_year(&self) -> u32 {
             self.year
         }

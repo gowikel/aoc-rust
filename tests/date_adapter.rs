@@ -1,6 +1,6 @@
 use aoc::{
     providers::date,
-    providers::date::{DateInfoProvider, Month},
+    providers::date::{CurrentDateProvider, Month},
 };
 use chrono::Datelike;
 
