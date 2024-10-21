@@ -29,6 +29,6 @@ impl FileOpener for LocalFileSystem {
 
 /// Returns the default implementation of FileSystem, which happens to be
 /// a LocalFileSystem
-pub fn get_default_fs_implementation() -> impl FileOpener {
+pub fn get_default_data_implementation() -> impl FileOpener {
     LocalFileSystem::default()
 }
