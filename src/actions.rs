@@ -10,10 +10,10 @@ use std::{
 };
 
 /// Downloads the main puzzle input for this puzzle
-pub fn download_input<D>(deps: &D, puzzle: Puzzle) -> Result<String, HTTPError>
-where
-    D: HTTPProvider,
-{
+pub fn download_input(
+    deps: &impl HTTPProvider,
+    puzzle: Puzzle,
+) -> Result<String, HTTPError> {
     trace!(
         "Downloading puzzle year: {}, day: {}",
         puzzle.year,
@@ -35,13 +35,10 @@ where
 }
 
 /// Loads the specified file input and returning a BufferReader
-pub fn open_file_buffer<'a, D>(
-    deps: &'a D,
+pub fn open_file_buffer<'a>(
+    deps: &'a impl FileOpener,
     path: &'a Path,
-) -> IOResult<BufReader<impl Read + 'a>>
-where
-    D: FileOpener,
-{
+) -> IOResult<BufReader<impl Read + 'a>> {
     let file = deps.open_file(path)?;
     Ok(BufReader::new(file))
 }
