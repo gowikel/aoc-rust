@@ -19,3 +19,4 @@ derive_more = { version = "1.0.0", features = ["display"]}
 
 [dev-dependencies]
 rstest = "0.23.0"
+tempfile = "3.13.0"
