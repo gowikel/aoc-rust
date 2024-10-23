@@ -116,11 +116,13 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn run_y2023_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
     trace!("Running y2023 solver...");
 
-    match puzzle.day() {
+    let solutions = match puzzle.day() {
         1 => solvers::y2023::day01::solve(execute, input_path),
         _ => {
             eprintln!("{} is not implemented!", puzzle.day());
             std::process::exit(exitcode::UNAVAILABLE)
         }
     };
+
+    solvers::print_results(puzzle, &solutions);
 }

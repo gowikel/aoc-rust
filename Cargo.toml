@@ -17,6 +17,8 @@ chrono = "0.4.38"
 exitcode = "1.1.2"
 derive_more = { version = "1.0.0", features = ["display"]}
 human-panic = "2.0.2"
+tabled = { version = "0.16.0", features = ["std", "ansi"]}
+owo-colors = "4.1.0"
 
 [dev-dependencies]
 rstest = "0.23.0"

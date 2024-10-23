@@ -11,6 +11,7 @@ use std::fmt::Debug;
 use thiserror::Error;
 
 /// This identifies any AoC puzzle unequivocally
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Puzzle {
     year: u32,
     day: u32,
@@ -67,11 +68,5 @@ impl Puzzle {
     /// Returns the stored day in the puzzle
     pub fn day(&self) -> u32 {
         self.day
-    }
-}
-
-impl Debug for Puzzle {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Puzzle {{ year: {}, day: {} }}", self.year, self.day)
     }
 }
