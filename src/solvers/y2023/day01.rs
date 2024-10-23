@@ -19,9 +19,11 @@ pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
 }
 
 fn solve_part1(input_path: &Path) -> Solution {
+    trace!("Running part 1...");
     Solution::NotImplemented
 }
 
 fn solve_part2(input_path: &Path) -> Solution {
+    trace!("Running part 2...");
     Solution::NotImplemented
 }
