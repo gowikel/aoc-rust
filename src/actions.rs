@@ -42,6 +42,8 @@ pub fn download_input(
 /// - The module definition file (yYYYY.rs) does not exist
 pub fn extract_template_for(puzzle: &Puzzle) -> IOResult<()> {
     trace!("Extracting template...");
+    let template = include_str!("../templates/day_template.txt");
+
     let target: PathBuf = [
         ".",
         "src",
@@ -59,8 +61,6 @@ pub fn extract_template_for(puzzle: &Puzzle) -> IOResult<()> {
 
         exit(exitcode::USAGE);
     }
-
-    let template = include_str!("../templates/day_template.txt");
 
     debug!("Creating and writing to {}...", target.display());
     let file = File::create(target.clone())?;
