@@ -19,6 +19,24 @@ pub enum Solution {
     NotImplemented,
 }
 
+#[derive(Debug, Display, PartialEq, Eq, Clone)]
+pub enum SolutionExecution {
+    Value(i32),
+    NotImplemented,
+}
+
+impl From<Result<SolutionExecution, String>> for Solution {
+    fn from(value: Result<SolutionExecution, String>) -> Self {
+        match value {
+            Err(s) => Solution::Err(s),
+            Ok(execution_value) => match execution_value {
+                SolutionExecution::NotImplemented => Solution::NotImplemented,
+                SolutionExecution::Value(value) => Solution::Value(value),
+            },
+        }
+    }
+}
+
 /// Helper to print the solutions for each solver
 pub fn print_results(puzzle: Puzzle, solutions: &[Solution; 2]) {
     let mut builder: Builder = Builder::default();
