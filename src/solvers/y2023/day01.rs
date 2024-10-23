@@ -3,7 +3,11 @@ use crate::{
     Execute,
 };
 use log::trace;
-use std::path::Path;
+use std::{
+    fs::File,
+    io::{BufRead, BufReader},
+    path::Path,
+};
 
 pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
     trace!("Running solver for day 01 with Execute {}...", execute);
@@ -24,7 +28,31 @@ pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
 fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
     trace!("Running part 1...");
 
-    Ok(SolutionExecution::NotImplemented)
+    let file =
+        File::open(input_path).map_err(|_| input_path.to_str().unwrap())?;
+    let reader = BufReader::new(file);
+
+    let mut parsed_numbers: Vec<i32> = Vec::new();
+
+    for line in reader.lines() {
+        let line = line.expect("Failed to read line.");
+
+        let digits: Vec<i32> = line
+            .chars()
+            .filter(|c| c.is_ascii_digit())
+            .map(|c| c.to_digit(10).unwrap())
+            .map(|d| i32::try_from(d).expect("Failed to convert digit to i32"))
+            .collect();
+
+        let first = digits.first().unwrap();
+        let last = digits.last().unwrap();
+
+        parsed_numbers.push(10 * first + last);
+    }
+
+    let result = parsed_numbers.iter().sum();
+
+    Ok(SolutionExecution::Value(result))
 }
 
 fn solve_part2(input_path: &Path) -> Result<SolutionExecution, &str> {
