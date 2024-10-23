@@ -25,10 +25,10 @@ pub enum SolutionExecution {
     NotImplemented,
 }
 
-impl From<Result<SolutionExecution, String>> for Solution {
-    fn from(value: Result<SolutionExecution, String>) -> Self {
+impl From<Result<SolutionExecution, &str>> for Solution {
+    fn from(value: Result<SolutionExecution, &str>) -> Self {
         match value {
-            Err(s) => Solution::Err(s),
+            Err(s) => Solution::Err(s.to_string()),
             Ok(execution_value) => match execution_value {
                 SolutionExecution::NotImplemented => Solution::NotImplemented,
                 SolutionExecution::Value(value) => Solution::Value(value),

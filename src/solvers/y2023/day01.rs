@@ -21,13 +21,13 @@ pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
     solutions
 }
 
-fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
+fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
     trace!("Running part 1...");
 
     Ok(SolutionExecution::NotImplemented)
 }
 
-fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
+fn solve_part2(input_path: &Path) -> Result<SolutionExecution, &str> {
     trace!("Running part 2...");
 
     Ok(SolutionExecution::NotImplemented)
