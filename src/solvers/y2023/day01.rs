@@ -1,4 +1,4 @@
-use crate::{solvers, solvers::Solution, Execute, Puzzle};
+use crate::{solvers::Solution, Execute};
 use log::trace;
 use std::path::Path;
 
