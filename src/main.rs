@@ -1,6 +1,6 @@
 use aoc::{
-    actions, actions::ExtractTemplateOptions, cli, providers,
-    providers::http::HTTPProvider, solvers, Execute, Puzzle,
+    actions, cli, providers, providers::http::HTTPProvider, solvers, Execute,
+    Puzzle,
 };
 use clap::{Args, Parser, Subcommand};
 use human_panic::setup_panic;
