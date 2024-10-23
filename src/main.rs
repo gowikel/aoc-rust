@@ -1,6 +1,6 @@
 use aoc::{
-    actions, cli, providers, providers::http::HTTPProvider, solvers, Execute,
-    Puzzle,
+    actions, actions::ExtractTemplateOptions, cli, providers,
+    providers::http::HTTPProvider, solvers, Execute, Puzzle,
 };
 use clap::{Args, Parser, Subcommand};
 use human_panic::setup_panic;
@@ -49,6 +49,8 @@ enum Commands {
     Download(DownloadArgs),
     /// Solve the specified puzzle
     Solve(SolveArgs),
+    /// Generate the boilerplate code to solve the aforementioned challenge
+    Generate,
 }
 
 #[derive(Args, PartialEq, Debug)]
@@ -107,6 +109,11 @@ fn main() -> Result<(), Box<dyn Error>> {
                     std::process::exit(exitcode::DATAERR);
                 }
             }
+        }
+        Commands::Generate => {
+            trace!("Generate command executing...");
+
+            actions::extract_template_for(&puzzle)?;
         }
     }
 
