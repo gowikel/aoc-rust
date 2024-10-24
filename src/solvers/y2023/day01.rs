@@ -32,16 +32,15 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
         File::open(input_path).map_err(|_| input_path.to_str().unwrap())?;
     let reader = BufReader::new(file);
 
-    let mut parsed_numbers: Vec<i32> = Vec::new();
+    let mut parsed_numbers: Vec<u32> = Vec::new();
 
     for line in reader.lines() {
         let line = line.expect("Failed to read line.");
 
-        let digits: Vec<i32> = line
+        let digits: Vec<u32> = line
             .chars()
             .filter(|c| c.is_ascii_digit())
             .map(|c| c.to_digit(10).unwrap())
-            .map(|d| i32::try_from(d).expect("Failed to convert digit to i32"))
             .collect();
 
         let first = digits.first().unwrap();

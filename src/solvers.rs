@@ -13,7 +13,7 @@ pub mod y2023;
 /// Solution returned by the solver
 #[derive(Debug, Display, PartialEq, Eq, Clone)]
 pub enum Solution {
-    Value(i32),
+    Value(u32),
     Err(String),
     NotExecuted,
     NotImplemented,
@@ -21,7 +21,7 @@ pub enum Solution {
 
 #[derive(Debug, Display, PartialEq, Eq, Clone)]
 pub enum SolutionExecution {
-    Value(i32),
+    Value(u32),
     NotImplemented,
 }
 
