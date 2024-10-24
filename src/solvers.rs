@@ -3,10 +3,13 @@
 use crate::Puzzle;
 use derive_more::Display;
 use owo_colors::OwoColorize;
-use tabled::builder::Builder;
-use tabled::settings::object::Rows;
-use tabled::settings::style::BorderSpanCorrection;
-use tabled::settings::{Alignment, Settings, Span, Style};
+use tabled::{
+    builder::Builder,
+    settings::{
+        object::Rows, style::BorderSpanCorrection, Alignment, Settings, Span,
+        Style,
+    },
+};
 
 pub mod y2023;
 
