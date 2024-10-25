@@ -42,7 +42,8 @@ pub fn download_input(
 /// - The module definition file (yYYYY.rs) does not exist
 pub fn extract_template_for(puzzle: &Puzzle) -> IOResult<()> {
     trace!("Extracting template...");
-    let template = include_str!("../templates/day_template.txt");
+    let template = include_str!("../templates/day_template.txt")
+        .replace("#DAY", puzzle.day().to_string().as_str());
 
     let target: PathBuf = [
         ".",
