@@ -43,8 +43,12 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
             .map(|c| c.to_digit(10).unwrap())
             .collect();
 
+        if digits.len() == 0 {
+            continue;
+        }
+
         let first = digits.first().unwrap();
-        let last = digits.last().unwrap();
+        let last = digits.last().unwrap_or(first);
 
         parsed_numbers.push(10 * first + last);
     }
