@@ -43,7 +43,7 @@ pub fn download_input(
 pub fn extract_template_for(puzzle: &Puzzle) -> IOResult<()> {
     trace!("Extracting template...");
     let template = include_str!("../templates/day_template.txt")
-        .replace("#DAY", puzzle.day().to_string().as_str());
+        .replace("#DAY", format!("{:02}", puzzle.day()).as_str());
 
     let target: PathBuf = [
         ".",
