@@ -1,8 +1,9 @@
 //! This contains the solutions to the different challenges
 
-use crate::Puzzle;
+use crate::{Execute, Puzzle};
 use derive_more::Display;
 use owo_colors::OwoColorize;
+use std::path::Path;
 use tabled::{
     builder::Builder,
     settings::{
@@ -78,4 +79,26 @@ pub fn print_results(puzzle: Puzzle, solutions: &[Solution; 2]) {
         .with(BorderSpanCorrection);
 
     println!("{}", table.to_string());
+}
+
+/// Runs the required solvers and returns a [Solution; 2] that can be used
+/// to interpret the results
+fn common_solve(
+    execute: Execute,
+    input_path: &Path,
+    solve_part1: fn(&Path) -> Result<SolutionExecution, &str>,
+    solve_part2: fn(&Path) -> Result<SolutionExecution, &str>,
+) -> [Solution; 2] {
+    let mut solutions: [Solution; 2] =
+        [Solution::NotExecuted, Solution::NotExecuted];
+
+    if execute == Execute::ALL || execute == Execute::P1 {
+        solutions[0] = solve_part1(&input_path).into();
+    }
+
+    if execute == Execute::ALL || execute == Execute::P2 {
+        solutions[1] = solve_part2(&input_path).into();
+    }
+
+    solutions
 }
