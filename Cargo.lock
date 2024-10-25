@@ -113,6 +113,7 @@ dependencies = [
 name = "aoc"
 version = "0.1.0"
 dependencies = [
+ "aho-corasick",
  "chrono",
  "clap",
  "derive_more",
