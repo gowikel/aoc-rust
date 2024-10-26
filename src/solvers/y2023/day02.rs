@@ -101,5 +101,47 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
 fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 2...");
 
-    Ok(SolutionExecution::NotImplemented)
+    let file = File::open(input_path)
+        .map_err(|e| format!("cannot open input file {}", e))?;
+    let reader = BufReader::new(file);
+
+    let mut result = 0;
+
+    for line in reader.lines() {
+        let line = line.map_err(|e| format!("cannot read line: {}", e))?;
+
+        let mut max_red = 0;
+        let mut max_green = 0;
+        let mut max_blue = 0;
+
+        for token in Token::lexer(&line) {
+            let token = token.map_err(|_| {
+                format!("Error while parsing the line: {}", line)
+            })?;
+
+            match token {
+                Token::Red(cubes) => {
+                    if cubes > max_red {
+                        max_red = cubes;
+                    }
+                }
+                Token::Green(cubes) => {
+                    if cubes > max_green {
+                        max_green = cubes;
+                    }
+                }
+                Token::Blue(cubes) => {
+                    if cubes > max_blue {
+                        max_blue = cubes;
+                    }
+                }
+                Token::Game(_) => {}
+            }
+        }
+
+        let power_cube = max_red * max_green * max_blue;
+        result += power_cube;
+    }
+
+    Ok(SolutionExecution::Value(result))
 }
