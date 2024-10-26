@@ -47,7 +47,8 @@ fn parse_color(lex: &mut Lexer<Token>) -> Option<u32> {
 fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 1...");
 
-    let file = File::open(input_path).map_err(|_| "cannot open input file")?;
+    let file = File::open(input_path)
+        .map_err(|e| format!("cannot open input file {}", e))?;
     let reader = BufReader::new(file);
 
     const MAX_RED_CUBES: u32 = 12;
@@ -57,12 +58,14 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
     let mut result: u32 = 0;
 
     for line in reader.lines() {
-        let line = line.map_err(|_| "cannot read line")?;
+        let line = line.map_err(|e| format!("cannot read line: {}", e))?;
 
         let mut game_id = None;
 
         for token in Token::lexer(&line) {
-            let token = token.map_err(|_| "Error while parsing the line")?;
+            let token = token.map_err(|_| {
+                format!("Error while parsing the line: {}", line)
+            })?;
 
             match token {
                 Token::Game(id) => game_id = Some(id),
