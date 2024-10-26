@@ -16,7 +16,7 @@ pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
     solvers::common_solve(execute, input_path, solve_part1, solve_part2)
 }
 
-fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
+fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 1...");
 
     let file =
@@ -49,7 +49,7 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
     Ok(SolutionExecution::Value(result))
 }
 
-fn solve_part2(input_path: &Path) -> Result<SolutionExecution, &str> {
+fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 2...");
 
     let patterns = &[

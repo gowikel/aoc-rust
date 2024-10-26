@@ -29,10 +29,10 @@ pub enum SolutionExecution {
     NotImplemented,
 }
 
-impl From<Result<SolutionExecution, &str>> for Solution {
-    fn from(value: Result<SolutionExecution, &str>) -> Self {
+impl From<Result<SolutionExecution, String>> for Solution {
+    fn from(value: Result<SolutionExecution, String>) -> Self {
         match value {
-            Err(s) => Solution::Err(s.to_string()),
+            Err(s) => Solution::Err(s),
             Ok(execution_value) => match execution_value {
                 SolutionExecution::NotImplemented => Solution::NotImplemented,
                 SolutionExecution::Value(value) => Solution::Value(value),
@@ -86,8 +86,8 @@ pub fn print_results(puzzle: Puzzle, solutions: &[Solution; 2]) {
 fn common_solve(
     execute: Execute,
     input_path: &Path,
-    solve_part1: fn(&Path) -> Result<SolutionExecution, &str>,
-    solve_part2: fn(&Path) -> Result<SolutionExecution, &str>,
+    solve_part1: fn(&Path) -> Result<SolutionExecution, String>,
+    solve_part2: fn(&Path) -> Result<SolutionExecution, String>,
 ) -> [Solution; 2] {
     let mut solutions: [Solution; 2] =
         [Solution::NotExecuted, Solution::NotExecuted];

@@ -44,7 +44,7 @@ fn parse_color(lex: &mut Lexer<Token>) -> Option<u32> {
     Some(parsed_number)
 }
 
-fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
+fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 1...");
 
     let file = File::open(input_path).map_err(|_| "cannot open input file")?;
@@ -95,7 +95,7 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, &str> {
     Ok(SolutionExecution::Value(result))
 }
 
-fn solve_part2(input_path: &Path) -> Result<SolutionExecution, &str> {
+fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 2...");
 
     Ok(SolutionExecution::NotImplemented)
