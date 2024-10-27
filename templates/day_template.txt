@@ -6,6 +6,16 @@ use crate::{
 use log::trace;
 use std::path::Path;
 
+/// Solves both parts of day 3's puzzle
+///
+/// # Arguments
+///
+/// * `execute` - Execution mode configuration
+/// * `input_path` - Path to the input file containing the schematic
+///
+/// # Returns
+///
+/// Array containing solutions for both parts of the puzzle
 pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
     trace!("Running solver for day #DAY with Execute {}...", execute);
     solvers::common_solve(execute, input_path, solve_part1, solve_part2)
