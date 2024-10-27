@@ -98,6 +98,39 @@ impl NumberToken {
 
         Some(Self::new(number, position))
     }
+
+    /// Determines if the number is in range of a given SymbolPosition
+    ///
+    /// # Arguments
+    ///
+    /// * `position` - The SymbolPosition to check against
+    ///
+    /// # Returns
+    ///
+    /// True if the number is in range of the SymbolPosition, false otherwise
+    fn is_in_range(&self, position: &SymbolPosition) -> bool {
+        let number_row = self.position.row;
+        let number_col_start = self.position.col.start;
+        let number_col_end = self.position.col.end;
+
+        let mut expanded_row_position_start = 0;
+        if number_row > 0 {
+            expanded_row_position_start = number_row - 1;
+        }
+
+        let mut expanded_col_position_start = 0;
+        if number_col_start > 0 {
+            expanded_col_position_start = number_col_start - 1;
+        }
+
+        let expanded_row_position =
+            expanded_row_position_start..=(number_row + 1);
+        let expanded_col_position =
+            expanded_col_position_start..=(number_col_end);
+
+        expanded_col_position.contains(&position.col)
+            && expanded_row_position.contains(&position.row)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -108,6 +141,19 @@ struct SymbolToken {
 
 impl SymbolToken {
     /// Creates a new symbol token
+    fn new(position: SymbolPosition) -> Self {
+        Self { position }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct GearToken {
+    /// Position information of the gear in the schematic
+    position: SymbolPosition,
+}
+
+impl GearToken {
+    /// Creates a new gear token
     fn new(position: SymbolPosition) -> Self {
         Self { position }
     }
@@ -144,8 +190,12 @@ enum Token {
     #[regex(r"[0-9]+", number_callback)]
     Number(NumberToken),
 
+    /// Gear tokens (asterisk symbol)
+    #[token("*", gear_callback)]
+    Gear(GearToken),
+
     /// Symbol tokens (anything that's not a number, newline, or whitespace)
-    #[regex(r"[^0-9\n. \t\f]", symbol_callback)]
+    #[regex(r"[^0-9*\n. \t\f]", symbol_callback)]
     Symbol(SymbolToken),
 }
 
@@ -203,7 +253,19 @@ fn symbol_callback(lexer: &Lexer<Token>) -> SymbolToken {
     let row = lexer.extras.line_number;
     let col_start =
         calculate_offset_position(lexer.span().start as u32, &lexer.extras);
+
     SymbolToken::new(SymbolPosition::new(row, col_start))
+}
+
+/// Callback for handling gear tokens
+///
+/// Creates a GearToken with position information from the lexer
+fn gear_callback(lexer: &Lexer<Token>) -> GearToken {
+    let row = lexer.extras.line_number;
+    let col_start =
+        calculate_offset_position(lexer.span().start as u32, &lexer.extras);
+
+    GearToken::new(SymbolPosition::new(row, col_start))
 }
 
 /// Solves part 1 of the puzzle
@@ -220,7 +282,7 @@ fn symbol_callback(lexer: &Lexer<Token>) -> SymbolToken {
 fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 1...");
 
-    let mut symbols: Vec<SymbolToken> = Vec::new();
+    let mut symbols: Vec<SymbolPosition> = Vec::new();
     let mut numbers: Vec<NumberToken> = Vec::new();
 
     let data = fs::read_to_string(input_path).map_err(|e| e.to_string())?;
@@ -230,7 +292,8 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
 
         match token {
             Token::Number(data) => numbers.push(data),
-            Token::Symbol(data) => symbols.push(data),
+            Token::Symbol(data) => symbols.push(data.position),
+            Token::Gear(data) => symbols.push(data.position),
             _ => {}
         }
     }
@@ -238,29 +301,8 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
     let mut result = 0;
 
     'outer: for number in numbers {
-        let number_row = number.position.row;
-        let number_col_start = number.position.col.start;
-        let number_col_end = number.position.col.end;
-
-        let mut expanded_row_position_start = 0;
-        if number_row > 0 {
-            expanded_row_position_start = number_row - 1;
-        }
-
-        let mut expanded_col_position_start = 0;
-        if number_col_start > 0 {
-            expanded_col_position_start = number_col_start - 1;
-        }
-
-        let expanded_row_position =
-            expanded_row_position_start..=(number_row + 1);
-        let expanded_col_position =
-            expanded_col_position_start..=(number_col_end);
-
         for symbol in &symbols {
-            if expanded_col_position.contains(&symbol.position.col)
-                && expanded_row_position.contains(&symbol.position.row)
-            {
+            if number.is_in_range(symbol) {
                 result += number.value;
                 continue 'outer;
             }
@@ -282,5 +324,39 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
 fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 2...");
 
-    Ok(SolutionExecution::NotImplemented)
+    let data = fs::read_to_string(input_path).map_err(|e| e.to_string())?;
+    let mut gears: Vec<SymbolPosition> = Vec::new();
+    let mut numbers: Vec<NumberToken> = Vec::new();
+    let mut result = 0;
+
+    for token in Token::lexer(&data) {
+        let token = token.map_err(|_| "Failed to parse data")?;
+
+        match token {
+            Token::Number(data) => numbers.push(data),
+            Token::Gear(data) => gears.push(data.position),
+            _ => {}
+        }
+    }
+
+    for gear in gears {
+        let mut numbers_in_range: Vec<u32> = Vec::new();
+
+        for number in &numbers {
+            if number.is_in_range(&gear) {
+                numbers_in_range.push(number.value);
+            }
+
+            if numbers_in_range.len() > 2 {
+                result += number.value;
+                break;
+            }
+        }
+
+        if numbers_in_range.len() == 2 {
+            result += numbers_in_range.iter().fold(1, |acc, x| acc * x);
+        }
+    }
+
+    Ok(SolutionExecution::Value(result))
 }
