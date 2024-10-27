@@ -2,6 +2,7 @@
 
 use crate::{Execute, Puzzle};
 use derive_more::Display;
+use num_format::{Buffer, Locale};
 use owo_colors::OwoColorize;
 use std::path::Path;
 use tabled::{
@@ -62,7 +63,11 @@ pub fn print_results(puzzle: Puzzle, solutions: &[Solution; 2]) {
             Solution::Err(err) => {
                 format!("{} {}", error_string, err).to_string()
             }
-            Solution::Value(x) => format!("{}", x).green().to_string(),
+            Solution::Value(x) => {
+                let mut buf = Buffer::default();
+                buf.write_formatted(x, &Locale::en);
+                buf.as_str().green().to_string()
+            }
         };
 
         builder.push_record(vec![header, solution]);
