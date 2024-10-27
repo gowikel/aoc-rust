@@ -6,7 +6,7 @@ use crate::{
 use log::trace;
 use std::path::Path;
 
-/// Solves both parts of day 3's puzzle
+/// Solves both parts of day #DAY's puzzle
 ///
 /// # Arguments
 ///
