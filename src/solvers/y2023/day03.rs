@@ -312,7 +312,7 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
     Ok(SolutionExecution::Value(result))
 }
 
-/// Solves part 2 of the puzzle (not implemented)
+/// Solves part 2 of the puzzle by calculating the product of numbers adjacent to gears
 ///
 /// # Arguments
 ///
