@@ -1,6 +1,7 @@
 use aoc::{
-    actions, cli, providers, providers::http::HTTPProvider, solvers, Execute,
-    Puzzle,
+    actions::ActionService, cli, providers,
+    providers::file_system::LocalFileSystem, providers::http::HTTPAdapter,
+    solvers, Execute, Puzzle,
 };
 use clap::{Args, Parser, Subcommand};
 use human_panic::setup_panic;
@@ -73,6 +74,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     setup_panic!();
     pretty_env_logger::init();
 
+    let http_provider = HTTPAdapter::default();
+    let fs_provider = LocalFileSystem::default();
+    let mut action_service = ActionService::new(http_provider, fs_provider);
     let cli = Cli::parse();
 
     info!("Application started...");
@@ -88,12 +92,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         Commands::Download(args) => {
             trace!("Download command executing...");
 
-            let mut http_provider =
-                providers::http::get_default_http_provider();
-
-            http_provider.set_cookie(args.aoc_cookie);
-
-            let puzzle_data = actions::download_input(&http_provider, puzzle)?;
+            action_service.set_cookie(args.aoc_cookie);
+            let puzzle_data = action_service.download_input(&puzzle)?;
 
             print!("{}", puzzle_data);
         }
@@ -113,7 +113,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Commands::Generate => {
             trace!("Generate command executing...");
 
-            actions::extract_template_for(&puzzle)?;
+            action_service.extract_template_for(&puzzle)?;
         }
     }
 

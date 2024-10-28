@@ -29,7 +29,7 @@ pub trait HTTPProvider {
 }
 
 #[derive(Default)]
-struct HTTPAdapter {
+pub struct HTTPAdapter {
     aoc_cookie: Option<String>,
 }
 
@@ -69,8 +69,4 @@ impl HTTPProvider for HTTPAdapter {
     fn get_cookie(&self) -> Option<String> {
         self.aoc_cookie.clone()
     }
-}
-
-pub fn get_default_http_provider() -> impl HTTPProvider {
-    HTTPAdapter::default()
 }
