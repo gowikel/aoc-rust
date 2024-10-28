@@ -1,8 +1,7 @@
 pub mod cli;
 pub mod constants;
-pub mod fs;
-pub mod http;
 pub mod providers;
+pub mod services;
 pub mod solvers;
 
 use clap::ValueEnum;
