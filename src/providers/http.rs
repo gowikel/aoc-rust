@@ -19,10 +19,8 @@ pub enum HTTPError {
 
 /// Trait to build and send HTTP Requests (not async)
 pub trait HTTPProvider {
-    type URL: AOCUrl;
-
     /// Prepares a GET request to the specified endpoint
-    fn get(&self, endpoint: &URL) -> Result<String, HTTPError>;
+    fn get(&self, endpoint: &impl AOCUrl) -> Result<String, HTTPError>;
 
     /// Adds a cookie that later will be used to fetch the data
     fn set_cookie(&mut self, cookie: String);
@@ -67,10 +65,8 @@ impl AOCUrl for URL {
 }
 
 impl HTTPProvider for HTTPAdapter {
-    type URL = URL;
-
-    fn get(&self, endpoint: &URL) -> Result<String, HTTPError> {
-        trace!("GET {:?}...", endpoint);
+    fn get(&self, endpoint: &impl AOCUrl) -> Result<String, HTTPError> {
+        trace!("GET {:?}...", endpoint.url());
         let client = Client::default();
         let endpoint = endpoint.url();
         let aoc_cookie = self.get_cookie().ok_or(
@@ -90,6 +86,8 @@ impl HTTPProvider for HTTPAdapter {
             })?;
 
         let result = response
+            .error_for_status()
+            .map_err(|e| HTTPError::FetchError(format!("{}", e)))?
             .text()
             .map_err(|e| HTTPError::ParseError(e.to_string()))?;
 
@@ -121,25 +119,8 @@ pub mod tests {
         assert_cookie_value: Option<String>,
     }
 
-    pub struct URLMock {
-        url: String,
-    }
-
-    impl URLMock {
-        fn new(url: String) -> Self {
-            Self { url }
-        }
-    }
-
-    impl AOCUrl for URLMock {
-        fn url(&self) -> String {
-            self.url.clone()
-        }
-    }
-
     impl HTTPProvider for HttpProviderMock {
-        type URL = URLMock;
-        fn get(&self, endpoint: &URL) -> Result<String, HTTPError> {
+        fn get(&self, endpoint: &impl AOCUrl) -> Result<String, HTTPError> {
             self.calls.borrow_mut().push(endpoint.url());
             self.responses.get(&endpoint.url()).unwrap().clone()
         }
