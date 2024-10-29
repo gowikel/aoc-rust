@@ -1,4 +1,4 @@
-use crate::providers::http::{HTTPAdapter, HTTPError, HTTPProvider};
+use crate::providers::http::{HTTPAdapter, HTTPError, HTTPProvider, URL};
 use crate::Puzzle;
 use log::{debug, trace};
 
@@ -43,13 +43,11 @@ where
             puzzle.day
         );
 
-        let base_url = "https://adventofcode.com";
-        let endpoint =
-            format!("{base_url}/{}/day/{}/input", puzzle.year, puzzle.day);
+        let url = URL::new(puzzle);
 
-        debug!("endpoint: {}", endpoint);
+        debug!("endpoint: {:?}", url);
 
-        let response = self.http_provider.get(&endpoint)?;
+        let response = self.http_provider.get(&url)?;
 
         debug!("response: {:?}", response);
         trace!("parsing text and returning");

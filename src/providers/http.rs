@@ -1,4 +1,5 @@
 //! Dependencies to make HTTP requests
+use crate::Puzzle;
 use log::trace;
 use reqwest::blocking::Client;
 use thiserror::Error;
@@ -18,8 +19,10 @@ pub enum HTTPError {
 
 /// Trait to build and send HTTP Requests (not async)
 pub trait HTTPProvider {
+    type URL: AOCUrl;
+
     /// Prepares a GET request to the specified endpoint
-    fn get(&self, endpoint: &str) -> Result<String, HTTPError>;
+    fn get(&self, endpoint: &URL) -> Result<String, HTTPError>;
 
     /// Adds a cookie that later will be used to fetch the data
     fn set_cookie(&mut self, cookie: String);
@@ -33,16 +36,49 @@ pub struct HTTPAdapter {
     aoc_cookie: Option<String>,
 }
 
+/// This encapsulates endpoints to AOC website
+pub trait AOCUrl {
+    /// Fetch the required URL
+    fn url(&self) -> String;
+}
+
+/// AOCUrl implementation
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct URL {
+    url: String,
+}
+
+impl URL {
+    /// Creates a new AOC Url from the provided puzzle
+    pub fn new(puzzle: &Puzzle) -> Self {
+        let endpoint = format!(
+            "https://adventofcode.com/{}/day/{}/input",
+            puzzle.year(),
+            puzzle.day()
+        );
+        Self { url: endpoint }
+    }
+}
+
+impl AOCUrl for URL {
+    fn url(&self) -> String {
+        self.url.clone()
+    }
+}
+
 impl HTTPProvider for HTTPAdapter {
-    fn get(&self, endpoint: &str) -> Result<String, HTTPError> {
-        trace!("GET {}...", endpoint);
+    type URL = URL;
+
+    fn get(&self, endpoint: &URL) -> Result<String, HTTPError> {
+        trace!("GET {:?}...", endpoint);
         let client = Client::default();
+        let endpoint = endpoint.url();
         let aoc_cookie = self.get_cookie().ok_or(
             HTTPError::MissingEnvVarError("AOC_COOKIE not set".into()),
         )?;
 
         let response = client
-            .get(endpoint)
+            .get(endpoint.clone())
             .header(reqwest::header::COOKIE, aoc_cookie)
             .send()
             .map_err(|e| {
@@ -85,10 +121,27 @@ pub mod tests {
         assert_cookie_value: Option<String>,
     }
 
+    pub struct URLMock {
+        url: String,
+    }
+
+    impl URLMock {
+        fn new(url: String) -> Self {
+            Self { url }
+        }
+    }
+
+    impl AOCUrl for URLMock {
+        fn url(&self) -> String {
+            self.url.clone()
+        }
+    }
+
     impl HTTPProvider for HttpProviderMock {
-        fn get(&self, endpoint: &str) -> Result<String, HTTPError> {
-            self.calls.borrow_mut().push(endpoint.to_string());
-            self.responses.get(endpoint).unwrap().clone()
+        type URL = URLMock;
+        fn get(&self, endpoint: &URL) -> Result<String, HTTPError> {
+            self.calls.borrow_mut().push(endpoint.url());
+            self.responses.get(&endpoint.url()).unwrap().clone()
         }
 
         fn set_cookie(&mut self, cookie: String) {
