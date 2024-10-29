@@ -70,3 +70,81 @@ impl HTTPProvider for HTTPAdapter {
         self.aoc_cookie.clone()
     }
 }
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+    use std::cell::RefCell;
+    use std::collections::HashMap;
+
+    pub struct HttpProviderMock {
+        responses: HashMap<String, Result<String, HTTPError>>,
+        cookie: Option<String>,
+        calls: RefCell<Vec<String>>,
+        assert_called_with: Option<String>,
+        assert_cookie_value: Option<String>,
+    }
+
+    impl HTTPProvider for HttpProviderMock {
+        fn get(&self, endpoint: &str) -> Result<String, HTTPError> {
+            self.calls.borrow_mut().push(endpoint.to_string());
+            self.responses.get(endpoint).unwrap().clone()
+        }
+
+        fn set_cookie(&mut self, cookie: String) {
+            self.cookie = Some(cookie);
+        }
+
+        fn get_cookie(&self) -> Option<String> {
+            unimplemented!("`get_cookie` is not needed in the mocks`")
+        }
+    }
+
+    impl HttpProviderMock {
+        pub fn new() -> Self {
+            Self {
+                responses: HashMap::new(),
+                cookie: None,
+                calls: RefCell::new(Vec::new()),
+                assert_called_with: None,
+                assert_cookie_value: None,
+            }
+        }
+        pub fn insert_response(&mut self, endpoint: String, response: String) {
+            self.responses.insert(endpoint, Ok(response));
+        }
+
+        pub fn insert_error(&mut self, endpoint: String, error: HTTPError) {
+            self.responses.insert(endpoint, Err(error));
+        }
+
+        pub fn assert_called_with(&mut self, endpoint: String) {
+            self.assert_called_with = Some(endpoint);
+        }
+
+        pub fn assert_cookie_value(&mut self, endpoint: String) {
+            self.assert_cookie_value = Some(endpoint);
+        }
+    }
+
+    impl Drop for HttpProviderMock {
+        fn drop(&mut self) {
+            if let Some(expected) = &self.assert_called_with {
+                assert!(
+                    self.calls.borrow().contains(&expected),
+                    "Expected call to {} not found. Calls: {:?}",
+                    expected,
+                    self.calls.borrow()
+                );
+            }
+
+            if let Some(expected) = &self.assert_cookie_value {
+                assert!(
+                    self.cookie.is_some(),
+                    "Cookie not set, but it was expected"
+                );
+                assert_eq!(self.cookie.clone().unwrap().as_str(), expected);
+            }
+        }
+    }
+}
