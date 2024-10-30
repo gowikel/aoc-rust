@@ -1,4 +1,3 @@
-pub mod cli;
 pub mod constants;
 pub mod providers;
 pub mod services;

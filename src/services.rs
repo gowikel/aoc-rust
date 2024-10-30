@@ -11,8 +11,10 @@
 //! * HTTPService: Manages HTTP operations, such as downloading puzzle inputs from the
 //!   Advent of Code website.
 
+pub mod date;
 pub mod fs;
 pub mod http;
 
+pub use date::DateService;
 pub use fs::FSService;
 pub use http::HTTPService;

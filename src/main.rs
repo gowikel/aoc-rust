@@ -1,17 +1,25 @@
-use aoc::{cli, providers, services, solvers, Execute, Puzzle};
+use aoc::{
+    providers::date::DateAdapter,
+    providers::file_system::LocalFileSystem,
+    providers::http::HTTPAdapter,
+    services::{DateService, FSService, HTTPService},
+    solvers, Execute, Puzzle,
+};
 use clap::{Args, Parser, Subcommand};
 use human_panic::setup_panic;
+use lazy_static::lazy_static;
 use log::{info, trace};
-use std::{error::Error, path::PathBuf};
+use std::{cell::LazyCell, error::Error, path::PathBuf, sync::Mutex};
 
-fn calculate_default_year() -> u32 {
-    let provider = providers::date::default_date_provider();
-    cli::default_year(&provider)
-}
+const DATE_SERVICE: LazyCell<DateService<DateAdapter>> =
+    LazyCell::new(|| DateService::default());
 
-fn calculate_default_day() -> u32 {
-    let provider = providers::date::default_date_provider();
-    cli::default_day(&provider)
+const FS_SERVICE: LazyCell<FSService<LocalFileSystem>> =
+    LazyCell::new(|| FSService::default());
+
+lazy_static! {
+    static ref HTTP_SERVICE: Mutex<HTTPService<HTTPAdapter>> =
+        Mutex::new(HTTPService::default());
 }
 
 fn validate_is_file(data: &str) -> Result<PathBuf, String> {
@@ -29,12 +37,12 @@ fn validate_is_file(data: &str) -> Result<PathBuf, String> {
 struct Cli {
     /// Selected year.
     /// Defaults to current year on December, last year otherwise.
-    #[arg(long, short, default_value_t = calculate_default_year(), global = true)]
+    #[arg(long, short, default_value_t = DATE_SERVICE.default_year(), global = true)]
     year: u32,
 
     /// Selected day.
     /// Defaults to current day on December between 1-25, 1 otherwise.
-    #[arg(long, short, default_value_t = calculate_default_day(), global = true)]
+    #[arg(long, short, default_value_t = DATE_SERVICE.default_day(), global = true)]
     day: u32,
 
     #[command(subcommand)]
@@ -84,10 +92,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     match cli.command {
         Commands::Download(args) => {
             trace!("Download command executing...");
-            let mut http_service = services::HTTPService::default();
-            http_service.set_cookie(args.aoc_cookie);
+            let mut service = HTTP_SERVICE.lock().unwrap();
+            service.set_cookie(args.aoc_cookie);
 
-            let puzzle_data = http_service.download_input(&puzzle)?;
+            let puzzle_data = service.download_input(&puzzle)?;
 
             print!("{}", puzzle_data);
         }
@@ -106,9 +114,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
         Commands::Generate => {
             trace!("Generate command executing...");
-            let fs_service = services::FSService::default();
 
-            fs_service.extract_template_for(&puzzle)?;
+            FS_SERVICE.extract_template_for(&puzzle)?;
         }
     }
 

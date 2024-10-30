@@ -28,7 +28,7 @@ pub trait CurrentDateProvider {
 }
 
 /// Implementation of the `DateInfoProvider` trait
-#[derive(Default)]
+#[derive(Copy, Clone, PartialEq, Eq, Default, Debug)]
 pub struct DateAdapter {}
 
 impl CurrentDateProvider for DateAdapter {
