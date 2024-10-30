@@ -18,3 +18,7 @@ pub mod http;
 pub use date::DateService;
 pub use fs::FSService;
 pub use http::HTTPService;
+
+pub use crate::providers::date::DateAdapter;
+pub use crate::providers::file_system::LocalFSAdapter;
+pub use crate::providers::http::HTTPAdapter;

@@ -43,9 +43,9 @@ pub trait FileSystem {
 /// This struct provides functionality to check for file existence and to open files
 /// using standard library types.
 #[derive(Default)]
-pub struct LocalFileSystem;
+pub struct LocalFSAdapter;
 
-impl FileSystem for LocalFileSystem {
+impl FileSystem for LocalFSAdapter {
     type Writer = BufWriter<File>;
 
     fn exists(&self, path: &PathBuf) -> bool {

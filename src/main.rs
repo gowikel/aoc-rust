@@ -1,8 +1,8 @@
 use aoc::{
-    providers::date::DateAdapter,
-    providers::file_system::LocalFileSystem,
-    providers::http::HTTPAdapter,
-    services::{DateService, FSService, HTTPService},
+    services::{
+        DateAdapter, DateService, FSService, HTTPAdapter, HTTPService,
+        LocalFSAdapter,
+    },
     solvers, Execute, Puzzle,
 };
 use clap::{Args, Parser, Subcommand};
@@ -14,7 +14,7 @@ use std::{cell::LazyCell, error::Error, path::PathBuf, sync::Mutex};
 const DATE_SERVICE: LazyCell<DateService<DateAdapter>> =
     LazyCell::new(|| DateService::default());
 
-const FS_SERVICE: LazyCell<FSService<LocalFileSystem>> =
+const FS_SERVICE: LazyCell<FSService<LocalFSAdapter>> =
     LazyCell::new(|| FSService::default());
 
 lazy_static! {

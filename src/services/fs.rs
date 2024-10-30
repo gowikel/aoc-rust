@@ -8,7 +8,7 @@
 //! - Extracting a puzzle template and writing it to a file system path based on the
 //! puzzle's year and day.
 
-use crate::providers::file_system::{FileSystem, LocalFileSystem};
+use crate::providers::file_system::{FileSystem, LocalFSAdapter};
 use crate::Puzzle;
 use log::{debug, trace};
 use std::io::{Result as IOResult, Write};
@@ -85,9 +85,9 @@ where
     }
 }
 
-impl Default for FSService<LocalFileSystem> {
-    /// Returns a default implementation of FSService using [`LocalFileSystem`]
+impl Default for FSService<LocalFSAdapter> {
+    /// Returns a default implementation of FSService using [`LocalFSAdapter`]
     fn default() -> Self {
-        Self::new(LocalFileSystem)
+        Self::new(LocalFSAdapter)
     }
 }
