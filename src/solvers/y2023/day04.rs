@@ -12,8 +12,9 @@ use crate::{
     solvers::{Solution, SolutionExecution},
     Execute,
 };
-use log::{debug, trace};
+use log::trace;
 use logos::Logos;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
@@ -133,5 +134,53 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
 fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
     trace!("Running part 2...");
 
-    Ok(SolutionExecution::NotImplemented)
+    let file = File::open(input_path).map_err(|e| e.to_string())?;
+    let reader = BufReader::new(file);
+    let mut scratchboards = HashMap::new();
+
+    for line in reader.lines() {
+        let line = line.map_err(|e| e.to_string())?;
+        let mut reading_status = ReadingStatus::ReadingWinningNumbers;
+        let mut winning_numbers = HashSet::new();
+        let mut current_card = None;
+        let mut matched_numbers = 0;
+
+        for token in Token::lexer(&line) {
+            let token = token.map_err(|_| {
+                format!("Unable to parse token in line: {}", line)
+            })?;
+
+            match token {
+                Token::Card(card) => current_card = Some(card),
+                Token::Separator => {
+                    reading_status = ReadingStatus::MatchingNumbers
+                }
+                Token::Number(n) => match reading_status {
+                    ReadingStatus::ReadingWinningNumbers => {
+                        winning_numbers.insert(n);
+                    }
+                    ReadingStatus::MatchingNumbers => {
+                        if winning_numbers.contains(&n) {
+                            winning_numbers.remove(&n);
+                            matched_numbers += 1;
+                        }
+                    }
+                },
+            }
+        }
+
+        let current_card = current_card
+            .ok_or(format!("Error parsing the card number on line: {line}"))?;
+
+        let copies = scratchboards.entry(current_card).or_insert(0);
+        *copies += 1;
+        let copies = *copies;
+
+        for card_number in current_card + 1..=current_card + matched_numbers {
+            *scratchboards.entry(card_number).or_insert(0) += copies;
+        }
+    }
+
+    let result = scratchboards.values().sum();
+    Ok(SolutionExecution::Value(result))
 }
