@@ -1,6 +1,6 @@
 use log::{debug, trace};
 use std::fs::{File, OpenOptions};
-use std::io::{BufWriter, Read, Result as IOResult, Write};
+use std::io::{BufWriter, Result as IOResult, Write};
 use std::path::PathBuf;
 
 /// This trait defines files that can be opened/created in write mode
