@@ -1,4 +1,5 @@
-use std::fs::File;
+use log::{debug, trace};
+use std::fs::{File, OpenOptions};
 use std::io::{BufWriter, Result as IOResult, Write};
 use std::path::PathBuf;
 
@@ -35,7 +36,7 @@ pub trait FileSystem {
     /// * An [`IOResult`] which is either:
     ///   - `Ok(Self::Writer)`: A writer for writing to the file.
     ///   - `Err(e)`: An I/O error if the file cannot be opened.
-    fn open(&self, path: &PathBuf) -> IOResult<Self::Writer>;
+    fn open_writable(&self, path: &PathBuf) -> IOResult<Self::Writer>;
 }
 
 /// A local file system implementation of the `FileSystem` trait.
@@ -52,8 +53,15 @@ impl FileSystem for LocalFSAdapter {
         path.exists()
     }
 
-    fn open(&self, path: &PathBuf) -> IOResult<Self::Writer> {
-        let file = File::open(path)?;
+    fn open_writable(&self, path: &PathBuf) -> IOResult<Self::Writer> {
+        trace!("open {}", path.display());
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(path)?;
+
+        debug!("File opened...");
         let buf = BufWriter::new(file);
         Ok(buf)
     }

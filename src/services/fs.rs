@@ -75,7 +75,7 @@ where
         }
 
         debug!("Creating and writing to {}...", target.display());
-        let mut file = self.fs_provider.open(&target)?;
+        let mut file = self.fs_provider.open_writable(&target)?;
         write!(file, "{}", template)?;
 
         debug!("Wrote {} to buffer", target.display());
