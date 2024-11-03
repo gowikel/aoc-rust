@@ -8,7 +8,7 @@
 //! - Extracting a puzzle template and writing it to a file system path based on the
 //! puzzle's year and day.
 
-use crate::providers::file_system::{FileSystem, LocalFSAdapter};
+use crate::providers::file_system::{FSExists, FSWrite, LocalFSAdapter};
 use crate::Puzzle;
 use log::{debug, trace};
 use std::io::{Result as IOResult, Write};
@@ -18,14 +18,14 @@ use std::process::exit;
 /// `FSService` encapsulates file system operations for handling puzzle templates.
 pub struct FSService<F>
 where
-    F: FileSystem,
+    F: FSWrite,
 {
     fs_provider: F,
 }
 
 impl<F> FSService<F>
 where
-    F: FileSystem,
+    F: FSWrite + FSExists,
 {
     /// Creates a new instance of `FSService` with the provided file system provider.
     ///
@@ -75,7 +75,7 @@ where
         }
 
         debug!("Creating and writing to {}...", target.display());
-        let mut file = self.fs_provider.open_writable(&target)?;
+        let mut file = self.fs_provider.open(&target)?;
         write!(file, "{}", template)?;
 
         debug!("Wrote {} to buffer", target.display());

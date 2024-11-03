@@ -1,26 +1,12 @@
 use log::{debug, trace};
 use std::fs::{File, OpenOptions};
-use std::io::{BufWriter, Result as IOResult, Write};
+use std::io::{BufWriter, Read, Result as IOResult, Write};
 use std::path::PathBuf;
 
-/// A trait for basic file system operations.
-///
-/// This trait defines the minimum set of methods required to check for the
-/// existence of a file and to open a file for writing.
-pub trait FileSystem {
+/// This trait defines files that can be opened/created in write mode
+pub trait FSWrite {
     /// The type of writer used for writing to the file.
     type Writer: Write;
-
-    /// Checks if the file at the given `path` exists.
-    ///
-    /// # Arguments
-    ///
-    /// * `path` - A `PathBuf` indicating the path of the file to check.
-    ///
-    /// # Returns
-    ///
-    /// * `true` if the file exists, `false` otherwise.
-    fn exists(&self, path: &PathBuf) -> bool;
 
     /// Opens the file at the given `path` for writing.
     ///
@@ -36,7 +22,21 @@ pub trait FileSystem {
     /// * An [`IOResult`] which is either:
     ///   - `Ok(Self::Writer)`: A writer for writing to the file.
     ///   - `Err(e)`: An I/O error if the file cannot be opened.
-    fn open_writable(&self, path: &PathBuf) -> IOResult<Self::Writer>;
+    fn open(&self, path: &PathBuf) -> IOResult<Self::Writer>;
+}
+
+/// This trait defines an operation to check if a file indeed exists in the filesystem
+pub trait FSExists {
+    /// Checks if the file at the given `path` exists.
+    ///
+    /// # Arguments
+    ///
+    /// * `path` - A `PathBuf` indicating the path of the file to check.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the file exists, `false` otherwise.
+    fn exists(&self, path: &PathBuf) -> bool;
 }
 
 /// A local file system implementation of the `FileSystem` trait.
@@ -46,14 +46,10 @@ pub trait FileSystem {
 #[derive(Default)]
 pub struct LocalFSAdapter;
 
-impl FileSystem for LocalFSAdapter {
+impl FSWrite for LocalFSAdapter {
     type Writer = BufWriter<File>;
 
-    fn exists(&self, path: &PathBuf) -> bool {
-        path.exists()
-    }
-
-    fn open_writable(&self, path: &PathBuf) -> IOResult<Self::Writer> {
+    fn open(&self, path: &PathBuf) -> IOResult<Self::Writer> {
         trace!("open {}", path.display());
         let file = OpenOptions::new()
             .read(true)
@@ -64,5 +60,11 @@ impl FileSystem for LocalFSAdapter {
         debug!("File opened...");
         let buf = BufWriter::new(file);
         Ok(buf)
+    }
+}
+
+impl FSExists for LocalFSAdapter {
+    fn exists(&self, path: &PathBuf) -> bool {
+        path.exists()
     }
 }
