@@ -23,15 +23,15 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
         File::open(input_path).map_err(|_| input_path.to_str().unwrap())?;
     let reader = BufReader::new(file);
 
-    let mut parsed_numbers: Vec<u32> = Vec::new();
+    let mut parsed_numbers: Vec<u64> = Vec::new();
 
     for line in reader.lines() {
         let line = line.expect("Failed to read line.");
 
-        let digits: Vec<u32> = line
+        let digits: Vec<u64> = line
             .chars()
             .filter(|c| c.is_ascii_digit())
-            .map(|c| c.to_digit(10).unwrap())
+            .map(|c| c.to_digit(10).unwrap() as u64)
             .collect();
 
         if digits.len() == 0 {
@@ -61,12 +61,12 @@ fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
     let file =
         File::open(input_path).map_err(|_| input_path.to_str().unwrap())?;
     let reader = BufReader::new(file);
-    let mut parsed_numbers: Vec<u32> = Vec::new();
+    let mut parsed_numbers: Vec<u64> = Vec::new();
 
     for line in reader.lines() {
         let line = line.expect("Failed to read line.");
 
-        let digits: Vec<u32> = ac
+        let digits: Vec<u64> = ac
             .find_overlapping_iter(&line)
             .map(|m| line[m.start()..m.end()].to_string())
             .map(|s| match s.as_str() {
@@ -82,7 +82,7 @@ fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
                 "nine" => "9".to_string(),
                 other => other.to_string(),
             })
-            .map(|n| n.parse::<u32>().expect("Expected an integer!"))
+            .map(|n| n.parse::<u64>().expect("Expected an integer!"))
             .collect();
 
         if digits.len() == 0 {

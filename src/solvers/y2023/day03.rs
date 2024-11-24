@@ -34,15 +34,15 @@ pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct NumberTokenPosition {
     /// Row index (0-based)
-    row: u32,
+    row: u64,
 
     /// Column range containing the number
-    col: Range<u32>,
+    col: Range<u64>,
 }
 
 impl NumberTokenPosition {
     /// Creates a new number token position
-    fn new(row: u32, col: Range<u32>) -> Self {
+    fn new(row: u64, col: Range<u64>) -> Self {
         Self { row, col }
     }
 }
@@ -51,15 +51,15 @@ impl NumberTokenPosition {
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct SymbolPosition {
     /// Row index (0-based)
-    row: u32,
+    row: u64,
 
     /// Col index (0-based)
-    col: u32,
+    col: u64,
 }
 
 impl SymbolPosition {
     /// Creates a new symbol position
-    fn new(row: u32, col: u32) -> Self {
+    fn new(row: u64, col: u64) -> Self {
         Self { row, col }
     }
 }
@@ -68,7 +68,7 @@ impl SymbolPosition {
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct NumberToken {
     /// The numeric value
-    value: u32,
+    value: u64,
 
     /// Position information of the number in the schematic
     position: NumberTokenPosition,
@@ -76,7 +76,7 @@ struct NumberToken {
 
 impl NumberToken {
     /// Creates a new number token
-    fn new(value: u32, position: NumberTokenPosition) -> Self {
+    fn new(value: u64, position: NumberTokenPosition) -> Self {
         Self { value, position }
     }
 
@@ -94,7 +94,7 @@ impl NumberToken {
         lexeme: &str,
         position: NumberTokenPosition,
     ) -> Option<Self> {
-        let number: u32 = lexeme.parse().ok()?;
+        let number: u64 = lexeme.parse().ok()?;
 
         Some(Self::new(number, position))
     }
@@ -162,10 +162,10 @@ impl GearToken {
 /// Metadata for tracking lexer position information
 struct Metadata {
     /// Current line number
-    line_number: u32,
+    line_number: u64,
 
     /// Current offset in the line
-    offset: u32,
+    offset: u64,
 }
 
 impl Default for Metadata {
@@ -209,7 +209,7 @@ enum Token {
 /// # Returns
 ///
 /// Adjusted position accounting for line offsets
-fn calculate_offset_position(n: u32, metadata: &Metadata) -> u32 {
+fn calculate_offset_position(n: u64, metadata: &Metadata) -> u64 {
     if metadata.offset == 0 {
         return n;
     }
@@ -222,7 +222,7 @@ fn calculate_offset_position(n: u32, metadata: &Metadata) -> u32 {
 /// Updates the line number and offset in the lexer metadata
 fn newline_callback(lexer: &mut Lexer<Token>) -> Skip {
     lexer.extras.line_number += 1;
-    lexer.extras.offset = lexer.span().start as u32;
+    lexer.extras.offset = lexer.span().start as u64;
 
     Skip
 }
@@ -235,9 +235,9 @@ fn number_callback(lexer: &Lexer<Token>) -> Option<NumberToken> {
     let row = lexer.extras.line_number;
 
     let col_start =
-        calculate_offset_position(lexer.span().start as u32, &lexer.extras);
+        calculate_offset_position(lexer.span().start as u64, &lexer.extras);
     let col_end =
-        calculate_offset_position(lexer.span().end as u32, &lexer.extras);
+        calculate_offset_position(lexer.span().end as u64, &lexer.extras);
 
     let col_range = col_start..col_end;
 
@@ -252,7 +252,7 @@ fn number_callback(lexer: &Lexer<Token>) -> Option<NumberToken> {
 fn symbol_callback(lexer: &Lexer<Token>) -> SymbolToken {
     let row = lexer.extras.line_number;
     let col_start =
-        calculate_offset_position(lexer.span().start as u32, &lexer.extras);
+        calculate_offset_position(lexer.span().start as u64, &lexer.extras);
 
     SymbolToken::new(SymbolPosition::new(row, col_start))
 }
@@ -263,7 +263,7 @@ fn symbol_callback(lexer: &Lexer<Token>) -> SymbolToken {
 fn gear_callback(lexer: &Lexer<Token>) -> GearToken {
     let row = lexer.extras.line_number;
     let col_start =
-        calculate_offset_position(lexer.span().start as u32, &lexer.extras);
+        calculate_offset_position(lexer.span().start as u64, &lexer.extras);
 
     GearToken::new(SymbolPosition::new(row, col_start))
 }
@@ -340,7 +340,7 @@ fn solve_part2(input_path: &Path) -> Result<SolutionExecution, String> {
     }
 
     for gear in gears {
-        let mut numbers_in_range: Vec<u32> = Vec::new();
+        let mut numbers_in_range: Vec<u64> = Vec::new();
 
         for number in &numbers {
             if number.is_in_range(&gear) {

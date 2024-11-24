@@ -18,26 +18,26 @@ pub fn solve(execute: Execute, input_path: &Path) -> [Solution; 2] {
 #[logos(skip r"[:;, \t\n\f]+")]
 enum Token {
     #[regex(r"Game [0-9]+", parse_game)]
-    Game(u32),
+    Game(u64),
 
     #[regex(r"[0-9]+ blue", parse_color)]
-    Blue(u32),
+    Blue(u64),
 
     #[regex(r"[0-9]+ green", parse_color)]
-    Green(u32),
+    Green(u64),
 
     #[regex(r"[0-9]+ red", parse_color)]
-    Red(u32),
+    Red(u64),
 }
 
-fn parse_game(lex: &mut Lexer<Token>) -> Option<u32> {
+fn parse_game(lex: &mut Lexer<Token>) -> Option<u64> {
     let number = lex.slice().split_whitespace().nth(1)?;
     let parsed_number = number.parse().ok()?;
 
     Some(parsed_number)
 }
 
-fn parse_color(lex: &mut Lexer<Token>) -> Option<u32> {
+fn parse_color(lex: &mut Lexer<Token>) -> Option<u64> {
     let number = lex.slice().split_whitespace().nth(0)?;
     let parsed_number = number.parse().ok()?;
 
@@ -51,11 +51,11 @@ fn solve_part1(input_path: &Path) -> Result<SolutionExecution, String> {
         .map_err(|e| format!("cannot open input file {}", e))?;
     let reader = BufReader::new(file);
 
-    const MAX_RED_CUBES: u32 = 12;
-    const MAX_GREEN_CUBES: u32 = 13;
-    const MAX_BLUE_CUBES: u32 = 14;
+    const MAX_RED_CUBES: u64 = 12;
+    const MAX_GREEN_CUBES: u64 = 13;
+    const MAX_BLUE_CUBES: u64 = 14;
 
-    let mut result: u32 = 0;
+    let mut result: u64 = 0;
 
     for line in reader.lines() {
         let line = line.map_err(|e| format!("cannot read line: {}", e))?;
