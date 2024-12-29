@@ -72,10 +72,11 @@ impl HTTPProvider for HTTPAdapter {
         let aoc_cookie = self.get_cookie().ok_or(
             HTTPError::MissingEnvVarError("AOC_COOKIE not set".into()),
         )?;
+        let cookie_value = format!("{}={}", "session", aoc_cookie);
 
         let response = client
             .get(endpoint.clone())
-            .header(reqwest::header::COOKIE, aoc_cookie)
+            .header(reqwest::header::COOKIE, cookie_value)
             .send()
             .map_err(|e| {
                 HTTPError::FetchError(format!(
