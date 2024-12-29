@@ -106,6 +106,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 2023 => {
                     run_y2023_solver(puzzle, args.execute, &args.puzzle_input)
                 }
+                2024 => {
+                    run_y2024_solver(puzzle, args.execute, &args.puzzle_input)
+                }
                 _ => {
                     eprintln!("{} not implemented", cli.year);
                     std::process::exit(exitcode::DATAERR);
@@ -131,6 +134,20 @@ fn run_y2023_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
         3 => solvers::y2023::day03::solve(execute, input_path),
         4 => solvers::y2023::day04::solve(execute, input_path),
         5 => solvers::y2023::day05::solve(execute, input_path),
+        _ => {
+            eprintln!("Day {:02} is not implemented!", puzzle.day());
+            std::process::exit(exitcode::UNAVAILABLE)
+        }
+    };
+
+    solvers::print_results(puzzle, &solutions);
+}
+
+fn run_y2024_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
+    trace!("Running y2024 solver...");
+
+    let solutions = match puzzle.day() {
+        // 1 => solvers::y2024::day01::solve(execute, input_path),
         _ => {
             eprintln!("Day {:02} is not implemented!", puzzle.day());
             std::process::exit(exitcode::UNAVAILABLE)

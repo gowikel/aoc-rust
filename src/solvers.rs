@@ -14,6 +14,7 @@ use tabled::{
 };
 
 pub mod y2023;
+pub mod y2024;
 
 /// Solution returned by the solver
 #[derive(Debug, Display, PartialEq, Eq, Clone)]
