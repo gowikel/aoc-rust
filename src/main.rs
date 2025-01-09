@@ -9,7 +9,7 @@ use clap::{Args, Parser, Subcommand};
 use human_panic::setup_panic;
 use lazy_static::lazy_static;
 use log::{info, trace};
-use std::{cell::LazyCell, error::Error, path::PathBuf, sync::Mutex};
+use std::{cell::LazyCell, error::Error, path::PathBuf, sync::Mutex, time::Instant};
 
 const DATE_SERVICE: LazyCell<DateService<DateAdapter>> =
     LazyCell::new(|| DateService::default());
@@ -102,6 +102,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         Commands::Solve(args) => {
             trace!("Solve command executing for year {}...", puzzle.year());
 
+            let start = Instant::now();
+
             match puzzle.year() {
                 2023 => {
                     run_y2023_solver(puzzle, args.execute, &args.puzzle_input)
@@ -114,6 +116,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                     std::process::exit(exitcode::DATAERR);
                 }
             }
+
+            let duration = start.elapsed();
+            println!("Time elapsed: {:?}", duration);
         }
         Commands::Generate => {
             trace!("Generate command executing...");
