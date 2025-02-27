@@ -95,13 +95,12 @@ mod tests {
             assert!(are_levels_safe(&with_jumps));
         }
 
-
         #[test]
         fn test_trend_change() {
             let final_change = vec![1, 3, 6, 5];
             let start_change = vec![1, 7, 6, 5];
             let mid_change = vec![1, 4, 3, 5];
-    
+
             assert!(!are_levels_safe(&final_change));
             assert!(!are_levels_safe(&start_change));
             assert!(!are_levels_safe(&mid_change));
@@ -113,18 +112,18 @@ mod tests {
             let jump_1 = vec![1, 2];
             let jump_2 = vec![1, 3];
             let jump_3 = vec![1, 4];
-    
+
             // Invalid ones
             let jump_4 = vec![1, 5];
             let jump_5 = vec![1, 6];
-    
+
             assert!(are_levels_safe(&jump_1));
             assert!(are_levels_safe(&jump_2));
             assert!(are_levels_safe(&jump_3));
             assert!(!are_levels_safe(&jump_4));
             assert!(!are_levels_safe(&jump_5));
         }
-    
+
         #[test]
         fn test_unary_levels() {
             let unary = vec![1];
