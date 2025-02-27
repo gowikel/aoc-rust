@@ -1,1 +1,2 @@
 inputs/** filter=git-crypt diff=git-crypt
+inputs/**/*.example.txt filter=
