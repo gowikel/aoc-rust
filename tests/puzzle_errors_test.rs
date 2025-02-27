@@ -27,7 +27,7 @@ fn invalid_day_test() {
     let mut cmd = Command::cargo_bin("aoc").unwrap();
 
     let expected_error = format!(
-        "Error: InvalidDay(\"day should be in [{}-{}] range. Current: 26].\")",
+        "Error: InvalidDay(\"day should be in [{}-{}] range. Current: 26.\")",
         VALID_DAYS.start(),
         VALID_DAYS.end()
     );

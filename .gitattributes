@@ -1,1 +1,2 @@
 inputs/** filter=git-crypt diff=git-crypt
+test/test_data/** filter=git-crypt diff=git-crypt

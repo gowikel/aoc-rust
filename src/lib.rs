@@ -50,7 +50,7 @@ impl Puzzle {
 
         if !constants::VALID_DAYS.contains(&day) {
             return Err(PuzzleError::InvalidDay(format!(
-                "day should be in [{}-{}] range. Current: {day}].",
+                "day should be in [{}-{}] range. Current: {day}.",
                 constants::VALID_DAYS.start(),
                 constants::VALID_DAYS.end()
             )));
