@@ -9,7 +9,9 @@ use clap::{Args, Parser, Subcommand};
 use human_panic::setup_panic;
 use lazy_static::lazy_static;
 use log::{info, trace};
-use std::{cell::LazyCell, error::Error, path::PathBuf, sync::Mutex, time::Instant};
+use std::{
+    cell::LazyCell, error::Error, path::PathBuf, sync::Mutex, time::Instant,
+};
 
 const DATE_SERVICE: LazyCell<DateService<DateAdapter>> =
     LazyCell::new(|| DateService::default());
