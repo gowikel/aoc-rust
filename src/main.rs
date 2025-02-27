@@ -153,6 +153,7 @@ fn run_y2024_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
 
     let solutions = match puzzle.day() {
         1 => solvers::y2024::day01::solve(execute, input_path),
+        2 => solvers::y2024::day02::solve(execute, input_path),
         _ => {
             eprintln!("Day {:02} is not implemented!", puzzle.day());
             std::process::exit(exitcode::UNAVAILABLE)
