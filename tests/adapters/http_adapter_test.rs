@@ -21,7 +21,7 @@ fn test_get_endpoint() {
     let mut server = mockito::Server::new();
     let mock = server
         .mock("GET", "/test-endpoint")
-        .match_header("Cookie", "TEST-COOKIE")
+        .match_header("Cookie", "session=TEST-COOKIE")
         .with_status(200)
         .with_body("TEST-SUCCESS")
         .create();
@@ -42,7 +42,7 @@ fn test_cookie_is_expected() {
     let mut server = mockito::Server::new();
     let mock = server
         .mock("GET", "/test-endpoint")
-        .match_header("Cookie", "TEST-COOKIE")
+        .match_header("Cookie", "session=TEST-COOKIE")
         .with_status(200)
         .with_body("TEST-SUCCESS")
         .create();
@@ -64,7 +64,7 @@ fn test_fetch_error() {
     let mut server = mockito::Server::new();
     let mock = server
         .mock("GET", "/test-endpoint")
-        .match_header("Cookie", "TEST-COOKIE")
+        .match_header("Cookie", "session=TEST-COOKIE")
         .with_status(400)
         .with_body("FAILED")
         .create();

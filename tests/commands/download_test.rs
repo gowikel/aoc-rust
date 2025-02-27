@@ -23,7 +23,7 @@ fn test_wrong_aoc_env_fails() {
         .assert()
         .failure()
         .stderr(predicate::str::contains(
-            "Error: FetchError(\"HTTP status client error (400 Bad Request)",
+            "HTTP status server error (500 Internal Server Error) for url",
         ));
 }
 
