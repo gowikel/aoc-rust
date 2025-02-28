@@ -36,9 +36,11 @@ Arguments:
   [EXECUTE]       [default: all] [possible values: all, p1, p2]
 
 Options:
-  -y, --year <YEAR>  Selected year. Defaults to current year on December, last year otherwise [default: 2024]
-  -d, --day <DAY>    Selected day. Defaults to current day on December between 1-25, 1 otherwise [default: 1]
-  -h, --help         Print help"));
+  -s, --style <STYLE>  Control how the results are displayed [default: tabulated] [possible values: simple, tabulated]
+  -y, --year <YEAR>    Selected year. Defaults to current year on December, last year otherwise [default: 2024]
+  -d, --day <DAY>      Selected day. Defaults to current day on December between 1-25, 1 otherwise [default: 1]
+      --no-color       Removes the color from the ouput [default: false]
+  -h, --help           Print help"));
 }
 
 #[test]

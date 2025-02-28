@@ -1,4 +1,5 @@
 pub mod constants;
+pub mod formatter;
 pub mod providers;
 pub mod services;
 pub mod solvers;

@@ -1,4 +1,5 @@
 use aoc::{
+    formatter::{self, StyleFormat},
     services::{
         DateAdapter, DateService, FSService, HTTPAdapter, HTTPService,
         LocalFSAdapter,
@@ -74,6 +75,19 @@ struct SolveArgs {
 
     #[arg(value_enum, default_value_t = Execute::ALL)]
     execute: Execute,
+
+    /// Control how the results are displayed
+    #[arg(
+        short,
+        long,
+        value_enum,
+        default_value_t = StyleFormat::Tabulated,
+    )]
+    style: StyleFormat,
+
+    /// Removes the color from the ouput [default: false]
+    #[arg(long, default_value_t = false)]
+    no_color: bool,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -105,8 +119,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             trace!("Solve command executing for year {}...", puzzle.year());
 
             let start = Instant::now();
-
-            match puzzle.year() {
+            let solutions = match puzzle.year() {
                 2023 => {
                     run_y2023_solver(puzzle, args.execute, &args.puzzle_input)
                 }
@@ -117,9 +130,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("{} not implemented", cli.year);
                     std::process::exit(exitcode::DATAERR);
                 }
-            }
-
+            };
             let duration = start.elapsed();
+
+            let result = formatter::new()
+                .set_style(args.style)
+                .set_color(!args.no_color)
+                .format(puzzle, &solutions);
+
+            println!("{}", result);
             println!("Time elapsed: {:?}", duration);
         }
         Commands::Generate => {
@@ -132,7 +151,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run_y2023_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
+fn run_y2023_solver(
+    puzzle: Puzzle,
+    execute: Execute,
+    input_path: &PathBuf,
+) -> [solvers::Solution; 2] {
     trace!("Running y2023 solver...");
 
     let solutions = match puzzle.day() {
@@ -147,10 +170,14 @@ fn run_y2023_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
         }
     };
 
-    solvers::print_results(puzzle, &solutions);
+    solutions
 }
 
-fn run_y2024_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
+fn run_y2024_solver(
+    puzzle: Puzzle,
+    execute: Execute,
+    input_path: &PathBuf,
+) -> [solvers::Solution; 2] {
     trace!("Running y2024 solver...");
 
     let solutions = match puzzle.day() {
@@ -162,5 +189,5 @@ fn run_y2024_solver(puzzle: Puzzle, execute: Execute, input_path: &PathBuf) {
         }
     };
 
-    solvers::print_results(puzzle, &solutions);
+    solutions
 }
