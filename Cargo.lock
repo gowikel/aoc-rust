@@ -121,7 +121,6 @@ dependencies = [
  "dotenv",
  "exitcode",
  "human-panic",
- "lazy_static",
  "log",
  "logos",
  "mockito",

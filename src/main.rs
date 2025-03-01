@@ -8,22 +8,22 @@ use aoc::{
 };
 use clap::{Args, Parser, Subcommand};
 use human_panic::setup_panic;
-use lazy_static::lazy_static;
 use log::{info, trace};
 use std::{
-    cell::LazyCell, error::Error, path::PathBuf, sync::Mutex, time::Instant,
+    error::Error,
+    path::PathBuf,
+    sync::{LazyLock, RwLock},
+    time::Instant,
 };
 
-const DATE_SERVICE: LazyCell<DateService<DateAdapter>> =
-    LazyCell::new(|| DateService::default());
+static DATE_SERVICE: LazyLock<DateService<DateAdapter>> =
+    LazyLock::new(|| DateService::default());
 
-const FS_SERVICE: LazyCell<FSService<LocalFSAdapter>> =
-    LazyCell::new(|| FSService::default());
+static FS_SERVICE: LazyLock<FSService<LocalFSAdapter>> =
+    LazyLock::new(|| FSService::default());
 
-lazy_static! {
-    static ref HTTP_SERVICE: Mutex<HTTPService<HTTPAdapter>> =
-        Mutex::new(HTTPService::default());
-}
+static HTTP_SERVICE: LazyLock<RwLock<HTTPService<HTTPAdapter>>> =
+    LazyLock::new(|| RwLock::new(HTTPService::default()));
 
 fn validate_is_file(data: &str) -> Result<PathBuf, String> {
     let path = PathBuf::from(data);
@@ -35,7 +35,7 @@ fn validate_is_file(data: &str) -> Result<PathBuf, String> {
     Ok(path)
 }
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 #[command(version, author, about)]
 struct Cli {
     /// Selected year.
@@ -108,10 +108,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     match cli.command {
         Commands::Download(args) => {
             trace!("Download command executing...");
-            let mut service = HTTP_SERVICE.lock().unwrap();
-            service.set_cookie(args.aoc_cookie);
+            {
+                HTTP_SERVICE.write()?.set_cookie(args.aoc_cookie);
+            }
 
-            let puzzle_data = service.download_input(&puzzle)?;
+            let puzzle_data = HTTP_SERVICE.read()?.download_input(&puzzle)?;
 
             print!("{}", puzzle_data);
         }
