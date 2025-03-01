@@ -414,7 +414,8 @@ mod tests {
 
     mod output_format {
         use crate::formatter::{
-            new, print_simple_results, print_tabulated_results, OutputFormat, StyleFormat
+            new, print_simple_results, print_tabulated_results, OutputFormat,
+            StyleFormat,
         };
 
         use super::{PUZZLE, VALUE_SOLUTIONS};
@@ -463,7 +464,8 @@ mod tests {
 
         #[test]
         fn test_tabulated_format() {
-            let expected = print_tabulated_results(*PUZZLE, &VALUE_SOLUTIONS, false);
+            let expected =
+                print_tabulated_results(*PUZZLE, &VALUE_SOLUTIONS, false);
             let result = OutputFormat::default()
                 .set_color(false)
                 .set_style(StyleFormat::Tabulated)
